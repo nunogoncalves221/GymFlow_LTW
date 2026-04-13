@@ -39,3 +39,7 @@
 - admin/p4s5w0rd
 - member/1234
 - trainer/1234
+
+## Mockups
+
+![Mockups](docs/mockup.png)
