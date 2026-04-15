@@ -68,3 +68,51 @@ footer.site-footer {
   width: 100%;
   aspect-ratio: 16/9;
 }
+
+/* Class detail (class.html) */
+.class-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.trainer-snippet {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.trainer-snippet .avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.trainer-snippet .trainer-link {
+  margin-left: auto;
+}
+
+.capacity-bar-bg {
+  height: 8px;
+  overflow: hidden;
+}
+
+.reviews-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.review-stars {
+  display: flex;
+  gap: 2px;
+}
