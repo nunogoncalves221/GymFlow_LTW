@@ -1,0 +1,552 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg:           #f8f7f3;
+    --bg-card:      #ffffff;
+    --bg-muted:     #f0ede6;
+    --accent:       #6b8f6b;
+    --accent-light: #a8c5a8;
+    --accent-dark:  #4a6b4a;
+    --warm:         #c97d4e;
+    --text:         #2c2c2c;
+    --text-muted:   #8a8076;
+    --border:       #e2ddd5;
+    --shadow:       0 2px 16px rgba(0, 0, 0, 0.06);
+    --shadow-lg:    0 6px 32px rgba(0, 0, 0, 0.09);
+    --radius:       16px;
+    --radius-sm:    10px;
+    --font-head:    Georgia, 'Times New Roman', serif;
+    --font-body:    'Trebuchet MS', Arial, sans-serif;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--text);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: "header" "main" "footer";
+    min-height: 100dvh;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-head);
+    font-weight: normal;
+    line-height: 1.2;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+header.site-header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 68px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+}
+
+main {
+    grid-area: main;
+    padding: 2.5rem 2rem;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+footer.site-footer {
+    grid-area: footer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2.5rem;
+    background: var(--bg-muted);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+
+/* Logo */
+.header-logo {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--accent-dark);
+    letter-spacing: 0.02em;
+}
+
+/* Buttons */
+button,
+.btn-login,
+.btn-book,
+.filter-btn {
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.btn-login {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.5rem 1.4rem;
+    letter-spacing: 0.02em;
+}
+
+.btn-login:hover {
+    background: var(--accent-dark);
+    box-shadow: 0 2px 12px rgba(107, 143, 107, 0.35);
+}
+
+.btn-book {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.85rem 2.5rem;
+    width: 100%;
+    font-size: 0.95rem;
+    margin-top: 1.25rem;
+    letter-spacing: 0.02em;
+}
+
+.btn-book:hover {
+    background: var(--accent-dark);
+    box-shadow: 0 4px 16px rgba(107, 143, 107, 0.4);
+}
+
+/* Filter buttons */
+.filter-btn {
+    background: var(--bg-card);
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    padding: 0.45rem 1.1rem;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Back link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--accent);
+}
+
+/* Generic card base */
+.class-card,
+.review-card,
+.capacity-card,
+.class-info-card,
+.trainer-info-card,
+.trainer-section {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+/* ─── FILTERS (index.html) ──────────────────────────────────── */
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+/* ─── CLASSES GRID (index.html) ─────────────────────────────── */
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+}
+
+.class-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow 0.25s, transform 0.25s;
+}
+
+.class-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.class-card-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+}
+
+.class-card-body {
+    padding: 1rem 1.1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    background: var(--bg-card);
+    position: relative;
+    z-index: 1;
+}
+
+.class-card-name {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    color: var(--text);
+}
+
+.class-card-meta {
+    font-size: 0.78rem;
+    color: var(--warm);
+    font-weight: 600;
+}
+
+.class-card-trainer {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ─── CLASS DETAIL (class.html) ─────────────────────────────── */
+.class-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.class-info-card {
+    padding: 2rem;
+}
+
+.class-info-card h1 {
+    font-size: 2rem;
+    color: var(--accent-dark);
+    margin-bottom: 1rem;
+}
+
+.class-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.class-meta-row span {
+    background: var(--bg-muted);
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+}
+
+.class-info-card p {
+    color: var(--text-muted);
+    line-height: 1.75;
+    max-width: 60ch;
+}
+
+/* Trainer snippet */
+.trainer-section {
+    padding: 1.5rem;
+}
+
+.trainer-snippet {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.trainer-snippet .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--accent-light);
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.trainer-name {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.trainer-role {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.trainer-link {
+    margin-left: auto;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+/* Capacity */
+.capacity-card {
+    padding: 1.5rem;
+}
+
+.capacity-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-muted);
+}
+
+.capacity-bar-bg {
+    height: 8px;
+    background: var(--bg-muted);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.capacity-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--accent-light), var(--accent));
+    border-radius: 999px;
+    transition: width 0.5s ease;
+}
+
+/* Reviews */
+.reviews-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.reviews-section h3 {
+    font-size: 1.2rem;
+    color: var(--accent-dark);
+    margin-bottom: 0.25rem;
+}
+
+.review-card {
+    padding: 1.25rem;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+}
+
+.review-author {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.review-stars {
+    display: flex;
+    gap: 2px;
+    color: var(--warm);
+    font-size: 1rem;
+}
+
+.review-message {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+/* ─── TRAINER PROFILE (trainer.html) ───────────────────────── */
+.trainer-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.trainer-info-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+}
+
+.trainer-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: var(--shadow);
+}
+
+.trainer-info-text {
+    flex: 1;
+    min-width: 220px;
+}
+
+.trainer-info-text h1 {
+    font-size: 1.8rem;
+    color: var(--accent-dark);
+    margin-bottom: 0.5rem;
+}
+
+.trainer-specialty {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.trainer-specialty {
+    font-size: 0.82rem;
+    color: var(--accent-dark);
+    font-weight: 600;
+}
+
+.trainer-info-text p {
+    color: var(--text-muted);
+    line-height: 1.75;
+}
+
+.trainer-classes {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.trainer-classes h3 {
+    padding: 1.25rem 1.75rem;
+    font-size: 1.1rem;
+    color: var(--accent-dark);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-muted);
+}
+
+.trainer-class-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+}
+
+.trainer-class-item:last-child {
+    border-bottom: none;
+}
+
+.trainer-class-item:hover {
+    background: var(--bg-muted);
+    color: var(--accent-dark);
+}
+
+.trainer-class-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.trainer-class-schedule {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+/* ─── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    header.site-header {
+        padding: 0 1.25rem;
+    }
+
+    main {
+        padding: 1.5rem 1rem;
+    }
+
+    footer.site-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+        padding: 1.25rem 1rem;
+    }
+
+    .classes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+
+    .class-info-card h1,
+    .trainer-info-text h1 {
+        font-size: 1.5rem;
+    }
+
+    .trainer-info-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .trainer-class-item {
+        padding: 0.85rem 1.25rem;
+    }
+}
