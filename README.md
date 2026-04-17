@@ -1,4 +1,17 @@
-# ltw16g03
+# GymFlow - ltw16g03
+
+## Team Members
+- Maria Luísa Ferreira (202406040)
+- Nuno Gonçalves (202403355)
+- Raquel Silva (202404971)
+
+## First Delivery 
+
+### Project Structure
+- pages/index.html - Home page
+- pages/class.html - Classes page
+- pages/trainer.html - Trainer profile
+- css/layout.css - Main stylesheet
 
 ## Features
 
@@ -32,6 +45,7 @@
 ## Running
 
     sqlite3 database/database.db < database/database.sql
+
     php -S localhost:9000
 
 ## Credentials
