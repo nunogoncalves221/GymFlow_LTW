@@ -477,7 +477,7 @@ button,
     overflow: hidden;
 }
 
-.trainer-classes h3 {
+.trainer-classes h2 {
     padding: 1.25rem 1.75rem;
     font-size: 1.1rem;
     color: var(--accent-dark);
