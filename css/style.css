@@ -374,7 +374,7 @@ button,
     gap: 1rem;
 }
 
-.reviews-section h3 {
+.reviews-section h2 {
     font-size: 1.2rem;
     color: var(--accent-dark);
     margin-bottom: 0.25rem;
