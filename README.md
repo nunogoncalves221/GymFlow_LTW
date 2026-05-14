@@ -11,7 +11,7 @@
 - pages/index.html - Home page
 - pages/class.html - Classes page
 - pages/trainer.html - Trainer profile
-- css/layout.css - Main stylesheet
+- css/style.css - Main stylesheet
 
 ## Features
 
