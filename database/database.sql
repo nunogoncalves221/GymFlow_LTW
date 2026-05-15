@@ -29,6 +29,20 @@ CREATE TABLE IF NOT EXISTS reviews (
     comment     TEXT    NOT NULL DEFAULT ''
 );
 
+-- Users
+CREATE TABLE IF NOT EXISTS users (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    name     TEXT    NOT NULL,
+    username TEXT    NOT NULL UNIQUE,
+    password TEXT    NOT NULL,
+    type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin'))
+);
+
+INSERT INTO users (id, name, username, password, type) VALUES
+(1, 'Admin',     'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
+(2, 'Member',    'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
+(3, 'Trainer',   'trainer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer');
+
 -- Trainers
 INSERT INTO trainers (id, name, bio, specializations, certifications) VALUES
 (1, 'Ana Silva',   'Yoga and wellness specialist with 10 years of experience. Passionate about helping people find balance through movement and breathwork.', 'Yoga · Zumba · Meditation', 'RYT-200 Yoga Certification, Zumba Instructor License'),

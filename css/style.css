@@ -739,6 +739,72 @@ button,
   cursor: pointer;
 }
 
+/* ─── AUTH (login / register) ──────────────────────────────── */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    padding-top: 3rem;
+}
+
+.auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.auth-card h2 {
+    font-size: 1.6rem;
+    color: var(--accent-dark);
+}
+
+.auth-switch {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.auth-switch a {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* Messages */
+#messages {
+    max-width: 1200px;
+    width: 100%;
+    margin: 1rem auto 0;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#messages article {
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+#messages article.success {
+    background: #eaf5ea;
+    color: #2d6a2d;
+    border: 1px solid #b6ddb6;
+}
+
+#messages article.error {
+    background: #fdf0f0;
+    color: #c0392b;
+    border: 1px solid #f0c4c4;
+}
+
 /* ─── RESPONSIVE ────────────────────────────────────────────── */
 @media (max-width: 640px) {
     header.site-header {

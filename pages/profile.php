@@ -4,10 +4,21 @@ declare(strict_types=1);
 require_once('../utils/session.php');
 $session = new Session();
 
+if (!$session->isLoggedIn()) { header('Location: /pages/login.php'); exit; }
+
 require_once('../database/connection.db.php');
+require_once('../database/user.class.php');
 require_once('../templates/common.tpl.php');
 require_once('../templates/profile.tpl.php');
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'logout') {
+    $session->logout();
+    header('Location: /pages/index.php'); exit;
+}
+
+$db   = getDatabaseConnection();
+$user = User::getUser($db, $session->getId());
+
 drawHeader($session, 'GymFlow — My Profile');
-drawProfileForm();
+drawProfileForm($user);
 drawFooter();

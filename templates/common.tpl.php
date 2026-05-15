@@ -16,10 +16,29 @@ require_once(__DIR__ . '/../utils/session.php');
 <body>
   <header class="site-header">
     <h1><a href="/pages/index.php" class="header-logo">GymFlow</a></h1>
-    <a href="/pages/profile.php" class="btn-profile">Profile</a>
+    <?php
+      if ($session->isLoggedIn()) drawLogoutForm($session);
+      else drawLoginForm();
+    ?>
   </header>
 
+  <section id="messages">
+    <?php foreach ($session->getMessages() as $message) { ?>
+      <article class="message <?= h($message['type']) ?>">
+        <?= h($message['text']) ?>
+      </article>
+    <?php } ?>
+  </section>
+
   <main>
+<?php } ?>
+
+<?php function drawLoginForm() { ?>
+  <a href="../pages/login.php" class="btn-profile">Login</a>
+<?php } ?>
+
+<?php function drawLogoutForm(Session $session) { ?>
+  <a href="../pages/profile.php" class="btn-profile"><?= h($session->getName()) ?></a>
 <?php } ?>
 
 <?php function drawFooter() { ?>
