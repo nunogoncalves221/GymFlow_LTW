@@ -1,0 +1,102 @@
+<?php
+declare(strict_types=1);
+?>
+
+<?php function drawProfileForm() { ?>
+  <section class="profile-page">
+
+    <a href="/pages/index.php" class="back-link">← Back to classes</a>
+
+    <article class="profile-hero">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="avatarInitials">JS</div>
+        <button class="avatar-edit-btn" title="Change photo">✎</button>
+      </div>
+      <div class="profile-hero-text">
+        <h2 id="heroName">João Santos</h2>
+        <p id="heroEmail">joao.santos@email.com</p>
+      </div>
+      <span class="profile-badge">Member since 2024</span>
+    </article>
+
+    <article class="profile-form-card">
+      <h3>Personal Information</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" value="João" />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" value="Santos" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" value="joao.santos@email.com" />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" value="+351 912 345 678" />
+        </div>
+        <div class="form-group">
+          <label for="dob">Date of birth</label>
+          <input type="date" id="dob" value="1993-07-15" />
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option>Prefer not to say</option>
+            <option selected>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="bio">About me</label>
+          <textarea id="bio">Passionate about fitness and healthy living. I love early morning yoga and occasional spinning sessions.</textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel">Cancel</button>
+        <button class="btn-save">Save changes</button>
+      </div>
+    </article>
+
+    <article class="profile-form-card">
+      <h3>Change Password</h3>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="currentPw">Current password</label>
+          <div class="input-password-wrap">
+            <input type="password" id="currentPw" placeholder="Enter current password" />
+            <button class="toggle-pw">👁</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="newPw">New password</label>
+          <div class="input-password-wrap">
+            <input type="password" id="newPw" placeholder="At least 8 characters" />
+            <button class="toggle-pw">👁</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="confirmPw">Confirm new password</label>
+          <div class="input-password-wrap">
+            <input type="password" id="confirmPw" placeholder="Repeat new password" />
+            <button class="toggle-pw">👁</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-save">Update password</button>
+      </div>
+    </article>
+
+    <aside class="danger-zone">
+      <h3>Danger zone</h3>
+      <p>Permanently delete your account and all your data. This action cannot be undone.</p>
+      <button class="btn-danger">Delete account</button>
+    </aside>
+
+  </section>
+<?php } ?>
