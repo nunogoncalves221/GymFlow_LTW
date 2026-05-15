@@ -33,8 +33,8 @@ body {
     background-color: var(--bg);
     color: var(--text);
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas: "header" "main" "footer";
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas: "header" "messages" "main" "footer";
     min-height: 100dvh;
     line-height: 1.6;
 }
@@ -777,6 +777,7 @@ button,
 
 /* Messages */
 #messages {
+    grid-area: messages;
     max-width: 1200px;
     width: 100%;
     margin: 1rem auto 0;
