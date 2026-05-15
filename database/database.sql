@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS trainers (
     name            TEXT    NOT NULL,
     bio             TEXT    NOT NULL DEFAULT '',
     specializations TEXT    NOT NULL DEFAULT '',
-    certifications  TEXT    NOT NULL DEFAULT ''
+    certifications  TEXT    NOT NULL DEFAULT '',
+    user_id         INTEGER REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS classes (
@@ -39,17 +40,21 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 INSERT INTO users (id, name, username, password, type) VALUES
-(1, 'Admin',     'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
-(2, 'Member',    'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
-(3, 'Trainer',   'trainer', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer');
+(1, 'Admin',        'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
+(2, 'Member',       'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
+(3, 'Ana Silva',    'ana',     '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
+(4, 'Carlos Mota',  'carlos',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
+(5, 'Marta Lima',   'marta',   '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
+(6, 'João Pires',   'joao',    '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
+(7, 'Rita Costa',   'rita',    '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer');
 
 -- Trainers
-INSERT INTO trainers (id, name, bio, specializations, certifications) VALUES
-(1, 'Ana Silva',   'Yoga and wellness specialist with 10 years of experience. Passionate about helping people find balance through movement and breathwork.', 'Yoga · Zumba · Meditation', 'RYT-200 Yoga Certification, Zumba Instructor License'),
-(2, 'Carlos Mota', 'Carlos has over 8 years of experience as a personal trainer, specialising in high-intensity workouts. Certified in HIIT, Crossfit and Sports Nutrition.', 'HIIT · Crossfit · Box Fit', 'HIIT Specialist, Crossfit Level 1, Sports Nutrition Certificate'),
-(3, 'Marta Lima',  'Pilates instructor and physiotherapist with a focus on core strength and injury rehabilitation.', 'Pilates · Meditation', 'Pilates Method Alliance, BSc Physiotherapy'),
-(4, 'João Pires',  'Cycling and cardio expert. João brings high energy and technical expertise to every spinning session.', 'Spinning · Cycling', 'Spinning Instructor Certification, Level 3 Personal Trainer'),
-(5, 'Rita Costa',  'Functional fitness coach specialising in crossfit and outdoor training. Rita loves pushing limits safely.', 'Crossfit · Functional Fitness', 'Crossfit Level 2, NSCA-CPT');
+INSERT INTO trainers (id, name, bio, specializations, certifications, user_id) VALUES
+(1, 'Ana Silva',   'Yoga and wellness specialist with 10 years of experience. Passionate about helping people find balance through movement and breathwork.', 'Yoga · Zumba · Meditation', 'RYT-200 Yoga Certification, Zumba Instructor License', 3),
+(2, 'Carlos Mota', 'Carlos has over 8 years of experience as a personal trainer, specialising in high-intensity workouts. Certified in HIIT, Crossfit and Sports Nutrition.', 'HIIT · Crossfit · Box Fit', 'HIIT Specialist, Crossfit Level 1, Sports Nutrition Certificate', 4),
+(3, 'Marta Lima',  'Pilates instructor and physiotherapist with a focus on core strength and injury rehabilitation.', 'Pilates · Meditation', 'Pilates Method Alliance, BSc Physiotherapy', 5),
+(4, 'João Pires',  'Cycling and cardio expert. João brings high energy and technical expertise to every spinning session.', 'Spinning · Cycling', 'Spinning Instructor Certification, Level 3 Personal Trainer', 6),
+(5, 'Rita Costa',  'Functional fitness coach specialising in crossfit and outdoor training. Rita loves pushing limits safely.', 'Crossfit · Functional Fitness', 'Crossfit Level 2, NSCA-CPT', 7);
 
 -- Classes
 INSERT INTO classes (id, name, type, description, duration_min, capacity, trainer_id, image, day_of_week, time) VALUES
