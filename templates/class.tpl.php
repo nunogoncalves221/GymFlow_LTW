@@ -1,31 +1,95 @@
 <?php
 declare(strict_types=1);
 
-function classFilterUrl(string $type, string $day, array $override = []): string {
-    $p = array_filter(array_merge(['type' => $type, 'day' => $day], $override));
+function classFilterUrl(string $type, string $day, string $trainer, string $time, array $override = []): string {
+    $p = array_filter(array_merge(['type' => $type, 'day' => $day, 'trainer' => $trainer, 'time' => $time], $override));
     return '/pages/index.php' . ($p ? '?' . http_build_query($p) : '');
 }
 ?>
 
-<?php function drawClassList(array $classes, array $types, string $filter_type, string $filter_day) { ?>
-  <div class="filters">
-    <a href="/pages/index.php"
-       class="filter-btn <?= !$filter_type && !$filter_day ? 'active' : '' ?>">All</a>
+<?php function drawClassList(array $classes, array $types, array $trainers, string $filter_type, string $filter_day, string $filter_trainer, string $filter_time) { ?>
+  <?php
+    $hasFilter = $filter_type || $filter_day || $filter_trainer || $filter_time;
+  ?>
+  <div class="search-filters">
+    <div class="filter-row">
 
-    <?php foreach ($types as $t): ?>
-      <a href="<?= h(classFilterUrl($filter_type, $filter_day, ['type' => $filter_type === $t ? '' : $t])) ?>"
-         class="filter-btn <?= $filter_type === $t ? 'active' : '' ?>"><?= h($t) ?></a>
-    <?php endforeach; ?>
+      <!-- Type pills -->
+      <div class="filter-group">
+        <span class="filter-label">Type</span>
+        <div class="filter-pills">
+          <?php foreach ($types as $t): ?>
+            <a href="<?= h(classFilterUrl($filter_type, $filter_day, $filter_trainer, $filter_time, ['type' => $filter_type === $t ? '' : $t])) ?>"
+               class="filter-btn <?= $filter_type === $t ? 'active' : '' ?>"><?= h($t) ?></a>
+          <?php endforeach; ?>
+        </div>
+      </div>
 
-    <span style="color:var(--border);margin:0 .25rem">|</span>
+      <!-- Day pills -->
+      <div class="filter-group">
+        <span class="filter-label">Day</span>
+        <div class="filter-pills">
+          <?php foreach (['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] as $d): ?>
+            <a href="<?= h(classFilterUrl($filter_type, $filter_day, $filter_trainer, $filter_time, ['day' => $filter_day === $d ? '' : $d])) ?>"
+               class="filter-btn <?= $filter_day === $d ? 'active' : '' ?>"><?= h(substr($d, 0, 3)) ?></a>
+          <?php endforeach; ?>
+        </div>
+      </div>
 
-    <?php foreach (['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] as $d): ?>
-      <a href="<?= h(classFilterUrl($filter_type, $filter_day, ['day' => $filter_day === $d ? '' : $d])) ?>"
-         class="filter-btn <?= $filter_day === $d ? 'active' : '' ?>"><?= h(substr($d, 0, 3)) ?></a>
-    <?php endforeach; ?>
+    </div>
+
+    <div class="filter-row filter-row-selects">
+
+      <!-- Trainer dropdown -->
+      <div class="filter-select-group">
+        <label class="filter-label" for="filter-trainer">Trainer</label>
+        <select id="filter-trainer" class="filter-select" onchange="applySelectFilter('trainer', this.value)">
+          <option value="">All trainers</option>
+          <?php foreach ($trainers as $tr): ?>
+            <option value="<?= h((string)$tr['id']) ?>"
+              <?= $filter_trainer === (string)$tr['id'] ? 'selected' : '' ?>>
+              <?= h($tr['name']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+
+      <!-- Time slot dropdown -->
+      <div class="filter-select-group">
+        <label class="filter-label" for="filter-time">Time</label>
+        <select id="filter-time" class="filter-select" onchange="applySelectFilter('time', this.value)">
+          <option value="">Any time</option>
+          <option value="morning"   <?= $filter_time === 'morning'   ? 'selected' : '' ?>>Morning (6am – 12pm)</option>
+          <option value="afternoon" <?= $filter_time === 'afternoon' ? 'selected' : '' ?>>Afternoon (12pm – 5pm)</option>
+          <option value="evening"   <?= $filter_time === 'evening'   ? 'selected' : '' ?>>Evening (5pm – midnight)</option>
+        </select>
+      </div>
+
+      <?php if ($hasFilter): ?>
+      <a href="/pages/index.php" class="filter-clear">✕ Clear filters</a>
+      <?php endif; ?>
+
+    </div>
+
+    <?php if ($hasFilter): ?>
+    <p class="filter-results-count"><?= count($classes) ?> class<?= count($classes) !== 1 ? 'es' : '' ?> found</p>
+    <?php endif; ?>
+
   </div>
 
+  <script>
+  function applySelectFilter(param, value) {
+    var url = new URL(window.location.href);
+    if (value) url.searchParams.set(param, value);
+    else url.searchParams.delete(param);
+    window.location.href = url.toString();
+  }
+  </script>
+
   <section class="classes-grid">
+    <?php if (empty($classes)): ?>
+    <p class="no-results">No classes match your filters. <a href="/pages/index.php" class="filter-clear-inline">Clear filters</a></p>
+    <?php endif; ?>
     <?php foreach ($classes as $c): ?>
     <a href="/pages/class.php?id=<?= $c->id ?>" class="class-card">
       <img src="<?= h($c->image) ?>" alt="<?= h($c->name) ?>" class="class-card-thumb">

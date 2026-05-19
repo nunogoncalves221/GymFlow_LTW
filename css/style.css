@@ -851,3 +851,107 @@ button,
         text-align: center;
     }
 }
+/* ─── SEARCH FILTERS (index - enhanced) ────────────────────── */
+.search-filters {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    box-shadow: var(--shadow);
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.filter-row-selects {
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.filter-select-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 180px;
+}
+
+.filter-select {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.85rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: auto;
+}
+
+.filter-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(107, 143, 107, 0.15);
+}
+
+.filter-clear {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    padding: 0.45rem 1rem;
+    align-self: flex-end;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+}
+
+.filter-clear:hover {
+    color: var(--warm);
+    border-color: var(--warm);
+}
+
+.filter-clear-inline {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.filter-results-count {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-muted);
+}

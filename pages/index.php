@@ -11,12 +11,15 @@ require_once('../templates/class.tpl.php');
 
 $db = getDatabaseConnection();
 
-$filter_type = trim($_GET['type'] ?? '');
-$filter_day  = trim($_GET['day']  ?? '');
+$filter_type    = trim($_GET['type']    ?? '');
+$filter_day     = trim($_GET['day']     ?? '');
+$filter_trainer = trim($_GET['trainer'] ?? '');
+$filter_time    = trim($_GET['time']    ?? '');
 
-$classes = FitnessClass::getClasses($db, $filter_type, $filter_day);
-$types   = FitnessClass::getTypes($db);
+$classes  = FitnessClass::getClasses($db, $filter_type, $filter_day, $filter_trainer, $filter_time);
+$types    = FitnessClass::getTypes($db);
+$trainers = FitnessClass::getTrainersForFilter($db);
 
 drawHeader($session, 'GymFlow — Classes');
-drawClassList($classes, $types, $filter_type, $filter_day);
+drawClassList($classes, $types, $trainers, $filter_type, $filter_day, $filter_trainer, $filter_time);
 drawFooter();

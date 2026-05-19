@@ -50,11 +50,15 @@ class FitnessClass {
             WHEN "Saturday" THEN 6 WHEN "Sunday" THEN 7 END';
     }
 
-    static function getClasses(PDO $db, string $type = '', string $day = ''): array {
+    static function getClasses(PDO $db, string $type = '', string $day = '', string $trainer = '', string $time = ''): array {
         $where  = ['1=1'];
         $params = [];
-        if ($type) { $where[] = 'c.type = ?';        $params[] = $type; }
-        if ($day)  { $where[] = 'c.day_of_week = ?'; $params[] = $day; }
+        if ($type)    { $where[] = 'c.type = ?';           $params[] = $type; }
+        if ($day)     { $where[] = 'c.day_of_week = ?';    $params[] = $day; }
+        if ($trainer) { $where[] = 'c.trainer_id = ?';     $params[] = (int)$trainer; }
+        if ($time)    { $where[] = 'c.time >= ? AND c.time < ?';
+                        [$from, $to] = self::timeSlotRange($time);
+                        $params[] = $from; $params[] = $to; }
 
         $stmt = $db->prepare(
             'SELECT c.*, t.name AS trainer_name
@@ -65,6 +69,19 @@ class FitnessClass {
         );
         $stmt->execute($params);
         return array_map([self::class, 'fromRow'], $stmt->fetchAll());
+    }
+
+    private static function timeSlotRange(string $slot): array {
+        return match($slot) {
+            'morning'   => ['06:00', '12:00'],
+            'afternoon' => ['12:00', '17:00'],
+            'evening'   => ['17:00', '24:00'],
+            default     => ['00:00', '24:00'],
+        };
+    }
+
+    static function getTrainersForFilter(PDO $db): array {
+        return $db->query('SELECT id, name FROM trainers ORDER BY name')->fetchAll();
     }
 
     static function getClass(PDO $db, int $id): ?FitnessClass {
