@@ -21,5 +21,6 @@ $types    = FitnessClass::getTypes($db);
 $trainers = FitnessClass::getTrainersForFilter($db);
 
 drawHeader($session, 'GymFlow — Classes');
+drawHeroBanner();
 drawClassList($classes, $types, $trainers, $filter_type, $filter_day, $filter_trainer, $filter_time);
 drawFooter();
