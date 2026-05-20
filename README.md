@@ -57,3 +57,7 @@
 ## Mockups
 
 ![Mockups](docs/mockup.png)
+
+## Database Schema
+
+![Database](docs/database.png)
