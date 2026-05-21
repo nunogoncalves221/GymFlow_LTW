@@ -49,4 +49,9 @@ class Trainer {
             $db->query('SELECT * FROM trainers ORDER BY name')->fetchAll()
         );
     }
+
+    function save(PDO $db): void {
+    $stmt = $db->prepare('UPDATE trainers SET bio = ?, specializations = ?, certifications = ? WHERE id = ?');
+    $stmt->execute([$this->bio, $this->specializations, $this->certifications, $this->id]);
+    }
 }
