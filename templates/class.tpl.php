@@ -9,7 +9,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 
 <?php function drawHeroBanner() { ?>
 <div class="hero-banner">
-  <div class="hero-bg"></div>
+  <img class="hero-bg" src="/docs/images/banner.jpeg" alt="">
   <div class="hero-content">
     <p class="hero-eyebrow">Welcome to</p>
     <h1 class="hero-title">GymFlow</h1>
