@@ -38,7 +38,10 @@ require_once(__DIR__ . '/../utils/session.php');
 <?php } ?>
 
 <?php function drawLogoutForm(Session $session) { ?>
-  <a href="../pages/profile.php" class="btn-profile"><?= h($session->getName()) ?></a>
+  <?php if ($session->getType() === 'trainer'): ?>
+    <a href="/pages/trainer_dashboard.php" class="btn-profile">Dashboard</a>
+  <?php endif; ?>
+  <a href="/pages/profile.php" class="btn-profile"><?= h($session->getName()) ?></a>
 <?php } ?>
 
 <?php function drawFooter() { ?>

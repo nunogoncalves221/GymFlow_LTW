@@ -1157,3 +1157,247 @@ button,
     font-style: italic;
     padding-left: 0.1rem;
 }
+/* ─── TRAINER DASHBOARD ──────────────────────────────────────── */
+.dashboard-header {
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-sub {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+}
+
+/* ─── CALENDAR ───────────────────────────────────────────────── */
+.cal-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: 52px repeat(7, 1fr);
+    grid-template-rows: 48px repeat(30, 40px);
+    min-width: 640px;
+    background: var(--bg-card);
+}
+
+.cal-corner {
+    background: var(--bg-elevated);
+    border-bottom: 2px solid var(--border);
+    border-right: 1px solid var(--border);
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.cal-day-header {
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    border-bottom: 2px solid var(--border);
+    border-right: 1px solid var(--border);
+}
+
+.cal-time-label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 3px 6px 0 0;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    border-right: 1px solid var(--border);
+}
+
+.cal-cell {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.cal-cell.hour-start {
+    border-bottom: 1px solid var(--border);
+}
+
+.cal-class-card {
+    background: rgba(232, 255, 71, 0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 5px;
+    padding: 4px 7px;
+    margin: 2px 3px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.15s;
+    z-index: 1;
+}
+
+.cal-class-card:hover {
+    background: rgba(232, 255, 71, 0.2);
+}
+
+.cal-class-name {
+    font-family: var(--font-head);
+    font-size: 0.8rem;
+    color: var(--accent);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cal-class-time {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* ─── MODAL ──────────────────────────────────────────────────── */
+.cal-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.cal-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 500px;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.modal-close:hover { color: var(--text); }
+
+.modal-class-name {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    padding-right: 2rem;
+}
+
+.modal-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.modal-badge {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: 100px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.modal-info-item {
+    background: var(--bg-elevated);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    text-align: center;
+}
+
+.modal-info-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+}
+
+.modal-info-value {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+}
+
+.modal-section-title {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin: 1.25rem 0 0.6rem;
+    letter-spacing: 0.05em;
+}
+
+.modal-reschedule-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    align-items: end;
+}
+
+.modal-reschedule-form select,
+.modal-reschedule-form input[type="time"] {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    padding: 0.6rem 0.8rem;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    width: 100%;
+}
+
+.modal-reschedule-form select:focus,
+.modal-reschedule-form input[type="time"]:focus {
+    border-color: var(--accent);
+}
+
+.modal-submit { grid-column: 1 / -1; }
+
+.roster-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.roster-table th,
+.roster-table td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.roster-table th {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.roster-table tr:last-child td { border-bottom: none; }
