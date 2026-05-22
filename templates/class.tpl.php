@@ -172,7 +172,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
         <form method="POST" action="/actions/action_submit_review.php" class="review-form">
           <input type="hidden" name="class_id" value="<?= $class->id ?>">
           <div class="star-picker" id="star-picker">
-            <?php for ($i = 1; $i <= 5; $i++): ?>
+            <?php for ($i = 5; $i >= 1; $i--): ?>
               <input type="radio" name="rating" id="star<?= $i ?>" value="<?= $i ?>" required>
               <label for="star<?= $i ?>" title="<?= $i ?> star<?= $i > 1 ? 's' : '' ?>">★</label>
             <?php endfor; ?>
