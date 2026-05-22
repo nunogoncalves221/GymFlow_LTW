@@ -39,12 +39,15 @@ require_once(__DIR__ . '/../utils/session.php');
 
 <?php function drawLogoutForm(Session $session) { ?>
   <div class="header-user-actions">
-    <?php if ($session->getType() === 'admin') { ?>
+    <?php if ($session->getType() === 'trainer'): ?>
+      <a href="/pages/trainer_dashboard.php" class="btn-profile">Dashboard</a>
+    <?php endif; ?>
+    <?php if ($session->getType() === 'admin'): ?>
       <a href="../pages/admin.php" class="btn-admin-icon" title="Admin Dashboard">
         <img src="../docs/icons/admin-dashboard.png" alt="Admin Dashboard">
       </a>
-    <?php } ?>
-    <a href="../pages/profile.php" class="btn-profile"><?= h($session->getName()) ?></a>
+    <?php endif; ?>
+    <a href="/pages/profile.php" class="btn-profile"><?= h($session->getName()) ?></a>
   </div>
 <?php } ?>
 
