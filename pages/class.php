@@ -18,11 +18,12 @@ $id    = (int)($_GET['id'] ?? 0);
 $class = FitnessClass::getClass($db, $id);
 if (!$class) { http_response_code(404); exit('Class not found.'); }
 
-$trainer     = $class->trainer_id ? Trainer::getTrainer($db, $class->trainer_id) : null;
-$reviews     = Review::getByClass($db, $id);
-$enrolled    = Enrollment::countEnrolled($db, $id);
-$is_enrolled = $session->isLoggedIn() ? Enrollment::isEnrolled($db, $id, $session->getId()) : false;
+$trainer        = $class->trainer_id ? Trainer::getTrainer($db, $class->trainer_id) : null;
+$reviews        = Review::getByClass($db, $id);
+$enrolled_count = FitnessClass::getEnrolledCount($db, $id);
+$is_enrolled    = $session->isLoggedIn() ? FitnessClass::isEnrolled($db, $session->getId(), $id) : false;
+$has_reviewed   = $session->isLoggedIn() ? Review::hasReviewed($db, $session->getId(), $id) : false;
 
 drawHeader($session, 'GymFlow — ' . $class->name);
-drawClassDetail($class, $trainer, $reviews, $session, $enrolled, $is_enrolled);
+drawClassDetail($class, $trainer, $reviews, $session, $enrolled_count, $is_enrolled, $has_reviewed);
 drawFooter();

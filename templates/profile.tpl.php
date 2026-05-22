@@ -9,13 +9,30 @@ declare(strict_types=1);
 
     <article class="profile-hero">
       <div class="profile-avatar-wrap">
-        <div class="profile-avatar"><?= h(initials($user->name)) ?></div>
+        <?php if ($user->profile_picture): ?>
+          <img class="profile-avatar-img" src="<?= h($user->getAvatarPath()) ?>" alt="Profile picture" />
+        <?php else: ?>
+          <div class="profile-avatar"><?= h(initials($user->name)) ?></div>
+        <?php endif; ?>
       </div>
       <div class="profile-hero-text">
         <h2><?= h($user->name) ?></h2>
         <p><?= h($user->username) ?></p>
       </div>
       <span class="profile-badge"><?= h($user->type) ?></span>
+    </article>
+
+    <article class="profile-form-card">
+      <h3>Profile Picture</h3>
+      <div class="profile-picture-section">
+        <img class="profile-picture-preview" src="<?= h($user->getAvatarPath()) ?>" alt="Current profile picture" />
+        <form action="../actions/action_upload_profile_picture.php" method="post" enctype="multipart/form-data" class="profile-picture-form">
+          <label for="profile_picture" class="btn-upload">Choose image</label>
+          <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp" />
+          <span class="upload-hint">JPEG, PNG, GIF or WebP · max 2 MB</span>
+          <button type="submit" class="btn-save">Upload</button>
+        </form>
+      </div>
     </article>
 
     <article class="profile-form-card">
