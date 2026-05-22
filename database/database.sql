@@ -30,13 +30,31 @@ CREATE TABLE IF NOT EXISTS reviews (
     comment     TEXT    NOT NULL DEFAULT ''
 );
 
+CREATE TABLE IF NOT EXISTS equipment (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    name         TEXT    NOT NULL,
+    type         TEXT    NOT NULL DEFAULT '',
+    quantity     INTEGER NOT NULL DEFAULT 1,
+    available    INTEGER NOT NULL DEFAULT 1 CHECK(available BETWEEN 0 AND 1)
+);
+
+INSERT INTO equipment (id, name, type, quantity, available) VALUES
+(1, 'Treadmill',      'Cardio',    8, 1),
+(2, 'Stationary Bike','Cardio',    6, 1),
+(3, 'Rowing Machine', 'Cardio',    4, 1),
+(4, 'Barbell Set',    'Weights',  10, 1),
+(5, 'Dumbbell Rack',  'Weights',   5, 1),
+(6, 'Weight Bench',   'Weights',   8, 1),
+(7, 'Pull-up Bar',    'Functional',4, 1),
+(8, 'Kettlebells',    'Functional',12, 1);
+
 -- Users
 CREATE TABLE IF NOT EXISTS users (
     id       INTEGER PRIMARY KEY AUTOINCREMENT,
     name     TEXT    NOT NULL,
     username TEXT    NOT NULL UNIQUE,
     password TEXT    NOT NULL,
-    type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin'))
+    type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated'))
 );
 
 INSERT INTO users (id, name, username, password, type) VALUES
