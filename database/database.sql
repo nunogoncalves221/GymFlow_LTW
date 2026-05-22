@@ -50,11 +50,12 @@ INSERT INTO equipment (id, name, type, quantity, available) VALUES
 
 -- Users
 CREATE TABLE IF NOT EXISTS users (
-    id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    name     TEXT    NOT NULL,
-    username TEXT    NOT NULL UNIQUE,
-    password TEXT    NOT NULL,
-    type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated'))
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT    NOT NULL,
+    username        TEXT    NOT NULL UNIQUE,
+    password        TEXT    NOT NULL,
+    type            TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated')),
+    profile_picture TEXT    DEFAULT NULL
 );
 
 -- Enrollments

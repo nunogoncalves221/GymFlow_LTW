@@ -6,19 +6,21 @@ class User {
     public string $name;
     public string $username;
     public string $type;
+    public ?string $profile_picture;
 
-    public function __construct(int $id, string $name, string $username, string $type) {
-        $this->id       = $id;
-        $this->name     = $name;
-        $this->username = $username;
-        $this->type     = $type;
+    public function __construct(int $id, string $name, string $username, string $type, ?string $profile_picture = null) {
+        $this->id              = $id;
+        $this->name            = $name;
+        $this->username        = $username;
+        $this->type            = $type;
+        $this->profile_picture = $profile_picture;
     }
 
     static function getUserWithPassword(PDO $db, string $username, string $password): ?User {
-        $stmt = $db->prepare('SELECT id, name, username, type FROM users WHERE username = ? AND password = ?');
+        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture FROM users WHERE username = ? AND password = ?');
         $stmt->execute([$username, sha1($password)]);
         $row = $stmt->fetch();
-        if ($row) return new User($row['id'], $row['name'], $row['username'], $row['type']);
+        if ($row) return new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture']);
         return null;
     }
 
@@ -37,22 +39,35 @@ class User {
         $stmt->execute([$this->name, $this->username, $this->id]);
     }
 
+    function saveProfilePicture(PDO $db, ?string $path): void {
+        $stmt = $db->prepare('UPDATE users SET profile_picture = ? WHERE id = ?');
+        $stmt->execute([$path, $this->id]);
+        $this->profile_picture = $path;
+    }
+
+    function getAvatarPath(): string {
+        if ($this->profile_picture !== null && $this->profile_picture !== '') {
+            return $this->profile_picture;
+        }
+        return '/docs/profile_pictures/default.jpg';
+    }
+
     static function getUser(PDO $db, int $id): ?User {
-        $stmt = $db->prepare('SELECT id, name, username, type FROM users WHERE id = ?');
+        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture FROM users WHERE id = ?');
         $stmt->execute([$id]);
         $row = $stmt->fetch();
-        return $row ? new User($row['id'], $row['name'], $row['username'], $row['type']) : null;
+        return $row ? new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture']) : null;
     }
 
     static function getAll(PDO $db): array {
-        $rows = $db->query('SELECT id, name, username, type FROM users ORDER BY type, name')->fetchAll();
-        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type']), $rows);
+        $rows = $db->query('SELECT id, name, username, type, profile_picture FROM users ORDER BY type, name')->fetchAll();
+        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type'], $r['profile_picture']), $rows);
     }
 
     static function getByType(PDO $db, string $type): array {
-        $stmt = $db->prepare('SELECT id, name, username, type FROM users WHERE type = ? ORDER BY name');
+        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture FROM users WHERE type = ? ORDER BY name');
         $stmt->execute([$type]);
-        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type']), $stmt->fetchAll());
+        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type'], $r['profile_picture']), $stmt->fetchAll());
     }
 
     function setType(PDO $db, string $type): void {
