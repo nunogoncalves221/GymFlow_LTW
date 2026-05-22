@@ -9,7 +9,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 
 <?php function drawHeroBanner() { ?>
 <div class="hero-banner">
-  <div class="hero-bg"></div>
+  <img class="hero-bg" src="/docs/images/banner.jpeg" alt="">
   <div class="hero-content">
     <p class="hero-eyebrow">Welcome to</p>
     <h1 class="hero-title">GymFlow</h1>
@@ -93,7 +93,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
   </section>
 <?php } ?>
 
-<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled, bool $is_enrolled) { ?>
+<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled_count, bool $is_enrolled, bool $has_reviewed = false) { ?>
   <a href="/pages/index.php" class="back-link">← Back to classes</a>
 
   <section class="class-detail">
@@ -123,48 +123,92 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
     </article>
     <?php endif; ?>
 
+    <?php
+      $spots_left = max(0, $class->capacity - $enrolled_count);
+      $fill_pct   = $class->capacity > 0 ? round($enrolled_count / $class->capacity * 100) : 0;
+      $is_full    = $spots_left === 0;
+    ?>
     <section class="capacity-section">
       <article class="capacity-card">
         <div class="capacity-row">
-          <span><?= $enrolled ?> / <?= $class->capacity ?> enrolled</span>
-          <span><?= $class->capacity - $enrolled ?> spots left</span>
+          <span><?= $enrolled_count ?> / <?= $class->capacity ?> enrolled</span>
+          <span><?= $spots_left ?> spot<?= $spots_left !== 1 ? 's' : '' ?> left</span>
         </div>
         <div class="capacity-bar-bg">
-          <div class="capacity-bar-fill" style="width: <?= $class->capacity > 0 ? round($enrolled / $class->capacity * 100) : 0 ?>%;"></div>
+          <div class="capacity-bar-fill" style="width: <?= $fill_pct ?>%;"></div>
         </div>
-        <?php if (!$session->isLoggedIn()): ?>
-          <a href="/pages/login.php" class="btn-book">Login to book</a>
-        <?php elseif ($session->getType() === 'member'): ?>
-          <?php if ($is_enrolled): ?>
-            <form action="../actions/action_enroll.php" method="post">
-              <input type="hidden" name="class_id" value="<?= $class->id ?>">
-              <input type="hidden" name="action" value="cancel">
-              <button type="submit" class="btn-cancel">Cancel enrollment</button>
-            </form>
-          <?php elseif ($enrolled < $class->capacity): ?>
-            <form action="../actions/action_enroll.php" method="post">
-              <input type="hidden" name="class_id" value="<?= $class->id ?>">
-              <input type="hidden" name="action" value="enroll">
-              <button type="submit" class="btn-book">Book a spot</button>
-            </form>
-          <?php else: ?>
-            <button class="btn-book" disabled>Class full</button>
-          <?php endif; ?>
-        <?php endif; ?>
+
+      <?php if (!$session->isLoggedIn()): ?>
+        <a href="/pages/login.php" class="btn-book" style="display:block; text-align:center;">Login to book a spot</a>
+
+      <?php elseif ($session->getType() === 'member' && $is_enrolled): ?>
+        <form method="POST" action="/actions/action_cancel_enrollment.php">
+          <input type="hidden" name="class_id" value="<?= $class->id ?>">
+          <button type="submit" class="btn-book btn-cancel">Cancel enrollment</button>
+        </form>
+
+      <?php elseif ($session->getType() === 'member' && $is_full): ?>
+        <button class="btn-book btn-disabled" disabled>Class is full</button>
+
+      <?php elseif ($session->getType() === 'member'): ?>
+        <form method="POST" action="/actions/action_enroll.php">
+          <input type="hidden" name="class_id" value="<?= $class->id ?>">
+          <button type="submit" class="btn-book">Book a spot</button>
+        </form>
+
+      <?php endif; ?>
       </article>
     </section>
 
     <section class="reviews-section">
       <h2>Reviews</h2>
+
+      <?php if ($session->isLoggedIn() && $session->getType() === 'member' && $is_enrolled && !$has_reviewed): ?>
+      <article class="review-form-card">
+        <h3>Leave a Review</h3>
+        <p class="review-form-meta">
+          <?= h($class->name) ?> · <?= h($class->day_of_week) ?> · <?= h($class->time) ?>
+        </p>
+        <form method="POST" action="/actions/action_submit_review.php" class="review-form">
+          <input type="hidden" name="class_id" value="<?= $class->id ?>">
+          <div class="star-picker" id="star-picker">
+            <?php for ($i = 5; $i >= 1; $i--): ?>
+              <input type="radio" name="rating" id="star<?= $i ?>" value="<?= $i ?>" required>
+              <label for="star<?= $i ?>" title="<?= $i ?> star<?= $i > 1 ? 's' : '' ?>">★</label>
+            <?php endfor; ?>
+          </div>
+          <textarea name="comment" rows="3" placeholder="Share your experience..." required></textarea>
+          <button type="submit" class="btn-review-submit">Submit Review</button>
+        </form>
+      </article>
+      <?php endif; ?>
+
+      <?php if ($session->isLoggedIn() && $session->getType() === 'member' && $is_enrolled && $has_reviewed): ?>
+      <p class="review-already-done">✓ You have already reviewed this class.</p>
+      <?php endif; ?>
+
+      <?php if (empty($reviews)): ?>
+      <p class="no-reviews">No reviews yet. Be the first!</p>
+      <?php endif; ?>
+
       <?php foreach ($reviews as $r): ?>
       <article class="review-card">
         <header class="review-header">
-          <span class="review-author"><?= h($r->author_name) ?></span>
+          <div class="review-author-block">
+            <span class="review-author"><?= h($r->author_name) ?></span>
+            <span class="review-class-badge"><?= h($r->class_name) ?> · <?= h($r->class_day) ?> · <?= h($r->class_time) ?></span>
+          </div>
           <div class="review-stars">
             <?= str_repeat('★', $r->rating) . str_repeat('☆', 5 - $r->rating) ?>
           </div>
         </header>
         <p class="review-message"><?= h($r->comment) ?></p>
+        <?php if ($r->created_at): ?>
+        <?php
+          date_default_timezone_set('Europe/Lisbon');
+        ?>
+        <time class="review-date"><?= h(date('d M Y, H:i', strtotime($r->created_at . ' UTC'))) ?></time>
+        <?php endif; ?>
       </article>
       <?php endforeach; ?>
     </section>
