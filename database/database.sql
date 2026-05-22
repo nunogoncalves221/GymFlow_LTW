@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
     name     TEXT    NOT NULL,
     username TEXT    NOT NULL UNIQUE,
     password TEXT    NOT NULL,
-    type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated'))
+    type            TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated')),
+    profile_picture TEXT    NOT NULL DEFAULT '/docs/profile_pictures/default.jpg'
 );
 
 CREATE TABLE IF NOT EXISTS trainers (
