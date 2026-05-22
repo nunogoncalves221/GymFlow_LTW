@@ -93,7 +93,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
   </section>
 <?php } ?>
 
-<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews) { ?>
+<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled_count, bool $is_enrolled) { ?>
   <a href="/pages/index.php" class="back-link">← Back to classes</a>
 
   <section class="class-detail">
@@ -123,16 +123,40 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
     </article>
     <?php endif; ?>
 
+    <?php
+      $spots_left = max(0, $class->capacity - $enrolled_count);
+      $fill_pct   = $class->capacity > 0 ? round($enrolled_count / $class->capacity * 100) : 0;
+      $is_full    = $spots_left === 0;
+    ?>
     <section class="capacity-section">
       <article class="capacity-card">
         <div class="capacity-row">
-          <span>0 / <?= $class->capacity ?> enrolled</span>
-          <span><?= $class->capacity ?> spots left</span>
+          <span><?= $enrolled_count ?> / <?= $class->capacity ?> enrolled</span>
+          <span><?= $spots_left ?> spot<?= $spots_left !== 1 ? 's' : '' ?> left</span>
         </div>
         <div class="capacity-bar-bg">
-          <div class="capacity-bar-fill" style="width: 0%;"></div>
+          <div class="capacity-bar-fill" style="width: <?= $fill_pct ?>%;"></div>
         </div>
-        <button class="btn-book">Book a spot</button>
+
+      <?php if (!$session->isLoggedIn()): ?>
+        <a href="/pages/login.php" class="btn-book" style="display:block; text-align:center;">Login to book a spot</a>
+
+      <?php elseif ($session->getType() === 'member' && $is_enrolled): ?>
+        <form method="POST" action="/actions/action_cancel_enrollment.php">
+          <input type="hidden" name="class_id" value="<?= $class->id ?>">
+          <button type="submit" class="btn-book btn-cancel">Cancel enrollment</button>
+        </form>
+
+      <?php elseif ($session->getType() === 'member' && $is_full): ?>
+        <button class="btn-book btn-disabled" disabled>Class is full</button>
+
+      <?php elseif ($session->getType() === 'member'): ?>
+        <form method="POST" action="/actions/action_enroll.php">
+          <input type="hidden" name="class_id" value="<?= $class->id ?>">
+          <button type="submit" class="btn-book">Book a spot</button>
+        </form>
+
+      <?php endif; ?>
       </article>
     </section>
 

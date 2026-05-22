@@ -39,6 +39,15 @@ CREATE TABLE IF NOT EXISTS users (
     type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin'))
 );
 
+-- Enrollments
+CREATE TABLE IF NOT EXISTS enrollments (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    class_id   INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, class_id)
+);
+
 INSERT INTO users (id, name, username, password, type) VALUES
 (1, 'Admin',        'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
 (2, 'Member',       'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
@@ -67,7 +76,7 @@ INSERT INTO classes (id, name, type, description, duration_min, capacity, traine
 ( 7, 'Pilates Core',       'Pilates',    'Strengthen your core and improve posture with this guided pilates session. Great for back pain relief and flexibility.',  50, 15,  3, '/docs/images/pilates_core.jpg',       'Wednesday', '10:00'),
 ( 8, 'Pilates Core',       'Pilates',    'Strengthen your core and improve posture with this guided pilates session. Great for back pain relief and flexibility.',  50, 15,  3, '/docs/images/pilates_core.jpg',       'Friday',    '09:00'),
 ( 9, 'Pilates Core',       'Pilates',    'Strengthen your core and improve posture with this guided pilates session. Great for back pain relief and flexibility.',  50, 15,  1, '/docs/images/pilates_core.jpg',       'Sunday',    '11:00'),
-(10, 'Spinning Pro',       'Spinning',   'High-energy indoor cycling class with interval training. Improve cardiovascular fitness and burn calories fast.',         45, 25,  4, '/docs/images/spinning_pro.jpg',       'Monday',    '07:00'),
+(10, 'Spinning Pro',       'Spinning',   'High-energy indoor cycling class with interval training. Improve cardiovascular fitness and burn calories fast.',         45, 1,  4, '/docs/images/spinning_pro.jpg',       'Monday',    '07:00'),
 (11, 'Spinning Pro',       'Spinning',   'High-energy indoor cycling class with interval training. Improve cardiovascular fitness and burn calories fast.',         45, 25,  4, '/docs/images/spinning_pro.jpg',       'Thursday',  '19:00'),
 (12, 'Spinning Pro',       'Spinning',   'High-energy indoor cycling class with interval training. Improve cardiovascular fitness and burn calories fast.',         45, 25,  5, '/docs/images/spinning_pro.jpg',       'Friday',    '18:00'),
 (13, 'Crossfit WOD',       'Crossfit',   'Workout of the Day — varied functional movements performed at high intensity. Build strength, endurance and agility.',    60, 15,  5, '/docs/images/crossfit_wod.jpg',       'Friday',    '07:00'),
