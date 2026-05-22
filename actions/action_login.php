@@ -14,6 +14,7 @@ $user = User::getUserWithPassword($db, $_POST['username'], $_POST['password']);
 if ($user) {
     $session->setId($user->id);
     $session->setName($user->name);
+    $session->setType($user->type);
     $session->addMessage('success', 'Welcome back, ' . $user->name . '!');
     header('Location: /pages/index.php');
 } else {
