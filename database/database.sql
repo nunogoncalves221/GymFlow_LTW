@@ -70,6 +70,7 @@ INSERT INTO equipment (id, name, type, quantity, available) VALUES
 (7, 'Pull-up Bar',    'Functional',4, 1),
 (8, 'Kettlebells',    'Functional',12, 1);
 
+
 INSERT INTO users (id, name, username, password, type) VALUES
 (0, 'Guest',        'guest',   '',                                          'member'),
 (1, 'Admin',        'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),

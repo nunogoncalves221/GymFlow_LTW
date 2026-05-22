@@ -128,6 +128,21 @@ class FitnessClass {
         return array_map([self::class, 'fromRow'], $stmt->fetchAll());
     }
 
+    static function getByTrainerAndDay(PDO $db, int $trainer_id, string $day, int $exclude_id): array {
+        $stmt = $db->prepare(
+            'SELECT c.*, t.name AS trainer_name
+             FROM classes c
+             LEFT JOIN trainers t ON t.id = c.trainer_id
+             WHERE c.trainer_id = ? AND c.day_of_week = ? AND c.id != ?'
+        );
+        $stmt->execute([$trainer_id, $day, $exclude_id]);
+        return array_map([self::class, 'fromRow'], $stmt->fetchAll());
+    }
+
+    static function reschedule(PDO $db, int $id, string $day_of_week, string $time): void {
+        $stmt = $db->prepare('UPDATE classes SET day_of_week = ?, time = ? WHERE id = ?');
+        $stmt->execute([$day_of_week, $time, $id]);
+    }
     // --- Enrollment methods ---
 
     static function getEnrolledCount(PDO $db, int $class_id): int {
