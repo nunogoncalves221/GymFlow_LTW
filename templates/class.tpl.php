@@ -93,7 +93,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
   </section>
 <?php } ?>
 
-<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled_count, bool $is_enrolled) { ?>
+<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled_count, bool $is_enrolled, bool $has_reviewed = false) { ?>
   <a href="/pages/index.php" class="back-link">← Back to classes</a>
 
   <section class="class-detail">
@@ -162,15 +162,53 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 
     <section class="reviews-section">
       <h2>Reviews</h2>
+
+      <?php if ($session->isLoggedIn() && $session->getType() === 'member' && $is_enrolled && !$has_reviewed): ?>
+      <article class="review-form-card">
+        <h3>Leave a Review</h3>
+        <p class="review-form-meta">
+          <?= h($class->name) ?> · <?= h($class->day_of_week) ?> · <?= h($class->time) ?>
+        </p>
+        <form method="POST" action="/actions/action_submit_review.php" class="review-form">
+          <input type="hidden" name="class_id" value="<?= $class->id ?>">
+          <div class="star-picker" id="star-picker">
+            <?php for ($i = 1; $i <= 5; $i++): ?>
+              <input type="radio" name="rating" id="star<?= $i ?>" value="<?= $i ?>" required>
+              <label for="star<?= $i ?>" title="<?= $i ?> star<?= $i > 1 ? 's' : '' ?>">★</label>
+            <?php endfor; ?>
+          </div>
+          <textarea name="comment" rows="3" placeholder="Share your experience..." required></textarea>
+          <button type="submit" class="btn-review-submit">Submit Review</button>
+        </form>
+      </article>
+      <?php endif; ?>
+
+      <?php if ($session->isLoggedIn() && $session->getType() === 'member' && $is_enrolled && $has_reviewed): ?>
+      <p class="review-already-done">✓ You have already reviewed this class.</p>
+      <?php endif; ?>
+
+      <?php if (empty($reviews)): ?>
+      <p class="no-reviews">No reviews yet. Be the first!</p>
+      <?php endif; ?>
+
       <?php foreach ($reviews as $r): ?>
       <article class="review-card">
         <header class="review-header">
-          <span class="review-author"><?= h($r->author_name) ?></span>
+          <div class="review-author-block">
+            <span class="review-author"><?= h($r->author_name) ?></span>
+            <span class="review-class-badge"><?= h($r->class_name) ?> · <?= h($r->class_day) ?> · <?= h($r->class_time) ?></span>
+          </div>
           <div class="review-stars">
             <?= str_repeat('★', $r->rating) . str_repeat('☆', 5 - $r->rating) ?>
           </div>
         </header>
         <p class="review-message"><?= h($r->comment) ?></p>
+        <?php if ($r->created_at): ?>
+        <?php
+          date_default_timezone_set('Europe/Lisbon');
+        ?>
+        <time class="review-date"><?= h(date('d M Y, H:i', strtotime($r->created_at . ' UTC'))) ?></time>
+        <?php endif; ?>
       </article>
       <?php endforeach; ?>
     </section>
