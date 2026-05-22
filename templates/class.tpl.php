@@ -93,7 +93,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
   </section>
 <?php } ?>
 
-<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews) { ?>
+<?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled, bool $is_enrolled) { ?>
   <a href="/pages/index.php" class="back-link">← Back to classes</a>
 
   <section class="class-detail">
@@ -126,13 +126,31 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
     <section class="capacity-section">
       <article class="capacity-card">
         <div class="capacity-row">
-          <span>0 / <?= $class->capacity ?> enrolled</span>
-          <span><?= $class->capacity ?> spots left</span>
+          <span><?= $enrolled ?> / <?= $class->capacity ?> enrolled</span>
+          <span><?= $class->capacity - $enrolled ?> spots left</span>
         </div>
         <div class="capacity-bar-bg">
-          <div class="capacity-bar-fill" style="width: 0%;"></div>
+          <div class="capacity-bar-fill" style="width: <?= $class->capacity > 0 ? round($enrolled / $class->capacity * 100) : 0 ?>%;"></div>
         </div>
-        <button class="btn-book">Book a spot</button>
+        <?php if (!$session->isLoggedIn()): ?>
+          <a href="/pages/login.php" class="btn-book">Login to book</a>
+        <?php elseif ($session->getType() === 'member'): ?>
+          <?php if ($is_enrolled): ?>
+            <form action="../actions/action_enroll.php" method="post">
+              <input type="hidden" name="class_id" value="<?= $class->id ?>">
+              <input type="hidden" name="action" value="cancel">
+              <button type="submit" class="btn-cancel">Cancel enrollment</button>
+            </form>
+          <?php elseif ($enrolled < $class->capacity): ?>
+            <form action="../actions/action_enroll.php" method="post">
+              <input type="hidden" name="class_id" value="<?= $class->id ?>">
+              <input type="hidden" name="action" value="enroll">
+              <button type="submit" class="btn-book">Book a spot</button>
+            </form>
+          <?php else: ?>
+            <button class="btn-book" disabled>Class full</button>
+          <?php endif; ?>
+        <?php endif; ?>
       </article>
     </section>
 

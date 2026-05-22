@@ -502,6 +502,10 @@ button,
     padding: 1.75rem;
 }
 
+.capacity-card form {
+    margin-top: 1rem;
+}
+
 .capacity-row {
     display: flex;
     justify-content: space-between;
