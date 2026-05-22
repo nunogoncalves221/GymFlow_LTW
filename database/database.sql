@@ -39,6 +39,13 @@ CREATE TABLE IF NOT EXISTS users (
     type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin'))
 );
 
+CREATE TABLE IF NOT EXISTS enrollments (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    class_id INTEGER NOT NULL REFERENCES classes(id),
+    user_id  INTEGER NOT NULL REFERENCES users(id),
+    UNIQUE(class_id, user_id)
+);
+
 INSERT INTO users (id, name, username, password, type) VALUES
 (1, 'Admin',        'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
 (2, 'Member',       'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
