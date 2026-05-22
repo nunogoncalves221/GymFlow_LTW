@@ -100,6 +100,22 @@ class FitnessClass {
         return $db->query('SELECT DISTINCT type FROM classes ORDER BY type')->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    static function create(PDO $db, string $name, string $type, string $description, int $duration_min, int $capacity, ?int $trainer_id, ?string $image, string $day_of_week, string $time): int {
+        $stmt = $db->prepare('INSERT INTO classes (name, type, description, duration_min, capacity, trainer_id, image, day_of_week, time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$name, $type, $description, $duration_min, $capacity, $trainer_id, $image, $day_of_week, $time]);
+        return (int)$db->lastInsertId();
+    }
+
+    function save(PDO $db): void {
+        $stmt = $db->prepare('UPDATE classes SET name = ?, type = ?, description = ?, duration_min = ?, capacity = ?, trainer_id = ?, image = ?, day_of_week = ?, time = ? WHERE id = ?');
+        $stmt->execute([$this->name, $this->type, $this->description, $this->duration_min, $this->capacity, $this->trainer_id, $this->image, $this->day_of_week, $this->time, $this->id]);
+    }
+
+    static function delete(PDO $db, int $id): void {
+        $db->prepare('DELETE FROM reviews WHERE class_id = ?')->execute([$id]);
+        $db->prepare('DELETE FROM classes WHERE id = ?')->execute([$id]);
+    }
+
     static function getByTrainer(PDO $db, int $trainer_id): array {
         $stmt = $db->prepare(
             'SELECT c.*, t.name AS trainer_name

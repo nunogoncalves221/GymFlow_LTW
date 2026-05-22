@@ -49,4 +49,20 @@ class Trainer {
             $db->query('SELECT * FROM trainers ORDER BY name')->fetchAll()
         );
     }
+
+    static function create(PDO $db, string $name, string $bio, string $specializations, string $certifications, ?int $user_id): int {
+        $stmt = $db->prepare('INSERT INTO trainers (name, bio, specializations, certifications, user_id) VALUES (?, ?, ?, ?, ?)');
+        $stmt->execute([$name, $bio, $specializations, $certifications, $user_id]);
+        return (int)$db->lastInsertId();
+    }
+
+    function save(PDO $db): void {
+        $stmt = $db->prepare('UPDATE trainers SET name = ?, bio = ?, specializations = ?, certifications = ?, user_id = ? WHERE id = ?');
+        $stmt->execute([$this->name, $this->bio, $this->specializations, $this->certifications, $this->user_id, $this->id]);
+    }
+
+    static function delete(PDO $db, int $id): void {
+        $stmt = $db->prepare('DELETE FROM trainers WHERE id = ?');
+        $stmt->execute([$id]);
+    }
 }
