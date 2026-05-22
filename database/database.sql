@@ -1,5 +1,14 @@
 PRAGMA foreign_keys = ON;
 
+-- Users
+CREATE TABLE IF NOT EXISTS users (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    name     TEXT    NOT NULL,
+    username TEXT    NOT NULL UNIQUE,
+    password TEXT    NOT NULL,
+    type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated'))
+);
+
 CREATE TABLE IF NOT EXISTS trainers (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     name            TEXT    NOT NULL,
@@ -25,9 +34,12 @@ CREATE TABLE IF NOT EXISTS classes (
 CREATE TABLE IF NOT EXISTS reviews (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     class_id    INTEGER NOT NULL REFERENCES classes(id),
+    user_id     INTEGER NOT NULL DEFAULT 0 REFERENCES users(id),
     author_name TEXT    NOT NULL,
     rating      INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
-    comment     TEXT    NOT NULL DEFAULT ''
+    comment     TEXT    NOT NULL DEFAULT '',
+    created_at  TEXT    NOT NULL DEFAULT ''
+
 );
 
 CREATE TABLE IF NOT EXISTS equipment (
@@ -36,6 +48,15 @@ CREATE TABLE IF NOT EXISTS equipment (
     type         TEXT    NOT NULL DEFAULT '',
     quantity     INTEGER NOT NULL DEFAULT 1,
     available    INTEGER NOT NULL DEFAULT 1 CHECK(available BETWEEN 0 AND 1)
+);
+
+-- Enrollments
+CREATE TABLE IF NOT EXISTS enrollments (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    class_id   INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, class_id)
 );
 
 INSERT INTO equipment (id, name, type, quantity, available) VALUES
@@ -48,25 +69,8 @@ INSERT INTO equipment (id, name, type, quantity, available) VALUES
 (7, 'Pull-up Bar',    'Functional',4, 1),
 (8, 'Kettlebells',    'Functional',12, 1);
 
--- Users
-CREATE TABLE IF NOT EXISTS users (
-    id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    name     TEXT    NOT NULL,
-    username TEXT    NOT NULL UNIQUE,
-    password TEXT    NOT NULL,
-    type     TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated'))
-);
-
--- Enrollments
-CREATE TABLE IF NOT EXISTS enrollments (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    class_id   INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
-    created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, class_id)
-);
-
 INSERT INTO users (id, name, username, password, type) VALUES
+(0, 'Guest',        'guest',   '',                                          'member'),
 (1, 'Admin',        'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
 (2, 'Member',       'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
 (3, 'Ana Silva',    'ana',     '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
@@ -108,10 +112,10 @@ INSERT INTO classes (id, name, type, description, duration_min, capacity, traine
 (21, 'Guided Meditation',  'Meditation', 'A calming session focused on breathwork, mindfulness and mental clarity. Perfect for stress reduction and recovery.',     40, 20,  3, '/docs/images/guided_meditation.jpg',  'Sunday',    '09:00');
 
 -- Reviews
-INSERT INTO reviews (id, class_id, author_name, rating, comment) VALUES
-(1,  4, 'Sofia Rodrigues', 5, 'Amazing class! Carlos is very motivating and the intensity is just right.'),
-(2,  4, 'Miguel Ferreira', 4, 'Great class, very complete. Could use more exercise variety but I highly recommend it.'),
-(3,  4, 'Inês Marques',    5, 'I''ve been coming for 3 months and the results are obvious. Great group energy.'),
-(4,  1, 'Sofia Rodrigues', 5, 'Ana is incredible. The class leaves me feeling refreshed and centered every single time.'),
-(5,  7, 'Beatriz Santos',  5, 'Marta is an exceptional instructor. My back pain has improved significantly.'),
-(6, 11, 'Rui Oliveira',    4, 'Intense and fun. João really knows how to keep the energy up throughout the session.');
+INSERT INTO reviews (id, class_id, user_id, author_name, rating, comment) VALUES
+(1,  4, 0, 'Sofia Rodrigues', 5, 'Amazing class! Carlos is very motivating and the intensity is just right.'),
+(2,  4, 0, 'Miguel Ferreira', 4, 'Great class, very complete. Could use more exercise variety but I highly recommend it.'),
+(3,  4, 0, 'Inês Marques',    5, 'I''ve been coming for 3 months and the results are obvious. Great group energy.'),
+(4,  1, 0, 'Sofia Rodrigues', 5, 'Ana is incredible. The class leaves me feeling refreshed and centered every single time.'),
+(5,  7, 0, 'Beatriz Santos',  5, 'Marta is an exceptional instructor. My back pain has improved significantly.'),
+(6, 11, 0, 'Rui Oliveira',    4, 'Intense and fun. João really knows how to keep the energy up throughout the session.');
