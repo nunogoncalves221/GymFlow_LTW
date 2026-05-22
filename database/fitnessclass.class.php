@@ -111,4 +111,58 @@ class FitnessClass {
         $stmt->execute([$trainer_id]);
         return array_map([self::class, 'fromRow'], $stmt->fetchAll());
     }
+
+    // --- Enrollment methods ---
+
+    static function getEnrolledCount(PDO $db, int $class_id): int {
+        $stmt = $db->prepare('SELECT COUNT(*) FROM enrollments WHERE class_id = ?');
+        $stmt->execute([$class_id]);
+        return (int)$stmt->fetchColumn();
+    }
+
+    static function isEnrolled(PDO $db, int $user_id, int $class_id): bool {
+        $stmt = $db->prepare('SELECT 1 FROM enrollments WHERE user_id = ? AND class_id = ?');
+        $stmt->execute([$user_id, $class_id]);
+        return (bool)$stmt->fetchColumn();
+    }
+
+    static function enroll(PDO $db, int $user_id, int $class_id): string {
+        $class = self::getClass($db, $class_id);
+        if (!$class) return 'error:Class not found.';
+
+        $enrolled = self::getEnrolledCount($db, $class_id);
+        if ($enrolled >= $class->capacity) return 'error:This class is full.';
+
+        if (self::isEnrolled($db, $user_id, $class_id)) return 'error:You are already enrolled in this class.';
+
+        try {
+            $db->prepare('INSERT INTO enrollments (user_id, class_id) VALUES (?, ?)')->execute([$user_id, $class_id]);
+            return 'success:You have been enrolled in ' . $class->name . '!';
+        } catch (PDOException) {
+            return 'error:Could not complete enrollment. Please try again.';
+        }
+    }
+
+    static function cancelEnrollment(PDO $db, int $user_id, int $class_id): string {
+        $class = self::getClass($db, $class_id);
+        if (!$class) return 'error:Class not found.';
+
+        if (!self::isEnrolled($db, $user_id, $class_id)) return 'error:You are not enrolled in this class.';
+
+        $db->prepare('DELETE FROM enrollments WHERE user_id = ? AND class_id = ?')->execute([$user_id, $class_id]);
+        return 'success:Your enrollment in ' . $class->name . ' has been cancelled.';
+    }
+
+    static function getEnrollmentsForUser(PDO $db, int $user_id): array {
+        $stmt = $db->prepare(
+            'SELECT c.*, t.name AS trainer_name, e.created_at AS enrolled_at
+            FROM enrollments e
+            JOIN classes c ON c.id = e.class_id
+            LEFT JOIN trainers t ON t.id = c.trainer_id
+            WHERE e.user_id = ?
+            ORDER BY ' . self::dayOrder() . ', c.time'
+        );
+        $stmt->execute([$user_id]);
+        return array_map([self::class, 'fromRow'], $stmt->fetchAll());
+    }
 }

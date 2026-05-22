@@ -19,7 +19,9 @@ if (!$class) { http_response_code(404); exit('Class not found.'); }
 
 $trainer = $class->trainer_id ? Trainer::getTrainer($db, $class->trainer_id) : null;
 $reviews = Review::getByClass($db, $id);
+$enrolled_count = FitnessClass::getEnrolledCount($db, $id);
+$is_enrolled    = $session->isLoggedIn() ? FitnessClass::isEnrolled($db, $session->getId(), $id) : false;
 
 drawHeader($session, 'GymFlow — ' . $class->name);
-drawClassDetail($class, $trainer, $reviews);
+drawClassDetail($class, $trainer, $reviews, $session, $enrolled_count, $is_enrolled );
 drawFooter();

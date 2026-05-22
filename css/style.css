@@ -154,6 +154,12 @@ button,
     font-weight: 800;
 }
 
+a.btn-book {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
 .btn-book:hover {
     background: var(--accent-dim);
     box-shadow: var(--shadow-glow);
@@ -1153,4 +1159,36 @@ button,
     color: var(--text-dim);
     font-style: italic;
     padding-left: 0.1rem;
+}
+
+/* Enrollment buttons */
+.btn-book.btn-cancel {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
+}
+.btn-book.btn-cancel:hover {
+    border-color: #e05252;
+    color: #e05252;
+    background: transparent;
+}
+.btn-book.btn-disabled {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.capacity-card form {
+    margin: 0;
+    padding: 0;
+}
+.capacity-card form .btn-book {
+    width: 100%;
+}
+.capacity-full-msg {
+    font-size: 0.82rem;
+    color: var(--red);
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 600;
 }
