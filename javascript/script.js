@@ -46,20 +46,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Profile picture preview
     const fileInput = document.getElementById('profile_picture');
     if (fileInput) {
-        const preview = document.querySelector('.profile-picture-preview');
-        const hint    = fileInput.closest('form') ? fileInput.closest('form').querySelector('.upload-hint') : null;
-
         fileInput.addEventListener('change', function () {
-            const file = fileInput.files[0];
-            if (!file) return;
-
-            if (preview) {
-                const reader = new FileReader();
-                reader.onload = function (e) { preview.src = e.target.result; };
-                reader.readAsDataURL(file);
-            }
-
-            if (hint) hint.textContent = file.name;
+            const btn = document.getElementById('avatar-upload-btn');
+            if (fileInput.files[0] && btn) btn.style.display = 'inline-block';
         });
     }
 

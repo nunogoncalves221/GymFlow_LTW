@@ -8,31 +8,26 @@ declare(strict_types=1);
     <a href="/pages/index.php" class="back-link">← Back to classes</a>
 
     <article class="profile-hero">
-      <div class="profile-avatar-wrap">
-        <?php if ($user->profile_picture): ?>
-          <img class="profile-avatar-img" src="<?= h($user->getAvatarPath()) ?>" alt="Profile picture" />
-        <?php else: ?>
-          <div class="profile-avatar"><?= h(initials($user->name)) ?></div>
-        <?php endif; ?>
-      </div>
+      <form action="../actions/action_upload_profile_picture.php" method="post" enctype="multipart/form-data" id="avatar-upload-form">
+        <div class="profile-avatar-wrap">
+          <?php if ($user->profile_picture): ?>
+            <img class="profile-avatar-img" src="<?= h($user->getAvatarPath()) ?>" alt="Profile picture" />
+          <?php else: ?>
+            <div class="profile-avatar"><?= h(initials($user->name)) ?></div>
+          <?php endif; ?>
+          <label for="profile_picture" class="avatar-edit-overlay" title="Change profile picture">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>Editar</span>
+          </label>
+          <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" />
+        </div>
+        <button type="submit" class="avatar-upload-btn" id="avatar-upload-btn" style="display:none">Guardar foto</button>
+      </form>
       <div class="profile-hero-text">
         <h2><?= h($user->name) ?></h2>
         <p><?= h($user->username) ?></p>
       </div>
       <span class="profile-badge"><?= h($user->type) ?></span>
-    </article>
-
-    <article class="profile-form-card">
-      <h3>Profile Picture</h3>
-      <div class="profile-picture-section">
-        <img class="profile-picture-preview" src="<?= h($user->getAvatarPath()) ?>" alt="Current profile picture" />
-        <form action="../actions/action_upload_profile_picture.php" method="post" enctype="multipart/form-data" class="profile-picture-form">
-          <label for="profile_picture" class="btn-upload">Choose image</label>
-          <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp" />
-          <span class="upload-hint">JPEG, PNG, GIF or WebP · max 2 MB</span>
-          <button type="submit" class="btn-save">Upload</button>
-        </form>
-      </div>
     </article>
 
     <article class="profile-form-card">
