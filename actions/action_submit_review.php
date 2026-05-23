@@ -32,7 +32,7 @@ if (!FitnessClass::isEnrolled($db, $session->getId(), $class_id)) {
     exit;
 }
 
-$result = Review::create($db, $class_id, $session->getId(), $session->getName(), $rating, $comment);
+$result = Review::create($db, $class_id, $session->getId(), $rating, $comment);
 [$type, $text] = explode(':', $result, 2);
 $session->addMessage($type, $text);
 

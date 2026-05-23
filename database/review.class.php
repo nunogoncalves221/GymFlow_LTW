@@ -14,9 +14,9 @@ class Review {
     public string $class_time;
 
     public function __construct(
-        int $id, int $class_id, int $user_id, string $author_name,
+        int $id, int $class_id, int $user_id,
         int $rating, string $comment, string $created_at,
-        string $class_name = '', string $class_day = '', string $class_time = ''
+        string $author_name = '', string $class_name = '', string $class_day = '', string $class_time = ''
     ) {
         $this->id          = $id;
         $this->class_id    = $class_id;
@@ -34,11 +34,11 @@ class Review {
         return new Review(
             (int)$r['id'],
             (int)$r['class_id'],
-            (int)($r['user_id'] ?? 0),
-            $r['author_name'],
+            (int)$r['user_id'],
             (int)$r['rating'],
             $r['comment'],
             $r['created_at'] ?? '',
+            $r['user_name']  ?? '',
             $r['class_name'] ?? '',
             $r['class_day']  ?? '',
             $r['class_time'] ?? ''
@@ -47,9 +47,11 @@ class Review {
 
     static function getByClass(PDO $db, int $class_id): array {
         $stmt = $db->prepare(
-            'SELECT r.id, r.class_id, r.user_id, r.author_name, r.rating, r.comment, r.created_at,
+            'SELECT r.id, r.class_id, r.user_id, r.rating, r.comment, r.created_at,
+                    u.name AS user_name,
                     c.name AS class_name, c.day_of_week AS class_day, c.time AS class_time
              FROM reviews r
+             JOIN users   u ON u.id = r.user_id
              JOIN classes c ON c.id = r.class_id
              WHERE r.class_id = ?
              ORDER BY r.created_at DESC'
@@ -64,16 +66,16 @@ class Review {
         return (bool)$stmt->fetchColumn();
     }
 
-    static function create(PDO $db, int $class_id, int $user_id, string $author_name, int $rating, string $comment): string {
+    static function create(PDO $db, int $class_id, int $user_id, int $rating, string $comment): string {
         if ($rating < 1 || $rating > 5) return 'error:Rating must be between 1 and 5.';
         if (trim($comment) === '')       return 'error:Please write a comment.';
         if (self::hasReviewed($db, $user_id, $class_id)) return 'error:You have already reviewed this class.';
 
         $stmt = $db->prepare(
-            'INSERT INTO reviews (class_id, user_id, author_name, rating, comment, created_at)
-             VALUES (?, ?, ?, ?, ?, datetime("now"))'
+            'INSERT INTO reviews (class_id, user_id, rating, comment)
+             VALUES (?, ?, ?, ?)'
         );
-        $stmt->execute([$class_id, $user_id, $author_name, $rating, $comment]);
+        $stmt->execute([$class_id, $user_id, $rating, $comment]);
         return 'success:Your review has been submitted. Thank you!';
     }
 }
