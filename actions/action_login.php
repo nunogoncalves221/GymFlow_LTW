@@ -11,7 +11,10 @@ $db = getDatabaseConnection();
 
 $user = User::getUserWithPassword($db, $_POST['username'], $_POST['password']);
 
-if ($user) {
+if ($user && $user->type === 'deactivated') {
+    $session->addMessage('error', 'Your account has been deactivated.');
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+} elseif ($user) {
     $session->setId($user->id);
     $session->setName($user->name);
     $session->setType($user->type);

@@ -762,40 +762,89 @@ a.btn-book {
 }
 
 .avatar-edit-overlay {
-    opacity: 1;
-    pointer-events: auto;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(30%);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+    font-family: var(--font-body);
 }
 
-.avatar-edit-overlay:hover {
+.avatar-edit-overlay:hover,
+.avatar-edit-overlay.active {
     border-color: var(--accent);
     color: var(--accent);
 }
 
-#avatar-upload-form {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+.avatar-edit-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 10;
+    min-width: 140px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 
-.avatar-upload-btn {
-    padding: 0.35rem 1rem;
-    background: var(--accent);
+.avatar-edit-menu.open {
+    display: block;
+}
+
+.avatar-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: transparent;
     border: none;
-    border-radius: 6px;
-    color: #000;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
     font-family: var(--font-body);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: left;
     cursor: pointer;
-    transition: opacity 0.18s ease;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
 }
 
-.avatar-upload-btn:hover {
-    opacity: 0.85;
+.avatar-menu-item:last-child {
+    border-bottom: none;
+}
+
+.avatar-menu-item:hover {
+    background: var(--bg-card);
+    color: var(--text);
+}
+
+.avatar-menu-save {
+    color: var(--accent);
+}
+
+.avatar-menu-save:hover {
+    color: var(--accent);
+}
+
+.avatar-menu-remove:hover {
+    color: #e05a5a;
 }
 
 .profile-hero-text h2 {

@@ -44,11 +44,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Profile picture preview
+    const editBtn  = document.getElementById('avatar-edit-btn');
+    const editMenu = document.getElementById('avatar-edit-menu');
     const fileInput = document.getElementById('profile_picture');
-    if (fileInput) {
+    const saveBtn   = document.getElementById('avatar-upload-btn');
+
+    if (editBtn && editMenu) {
+        editBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            editMenu.classList.toggle('open');
+            editBtn.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function () {
+            editMenu.classList.remove('open');
+            editBtn.classList.remove('active');
+        });
+
+        editMenu.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+
+    if (fileInput && saveBtn) {
         fileInput.addEventListener('change', function () {
-            const btn = document.getElementById('avatar-upload-btn');
-            if (fileInput.files[0] && btn) btn.style.display = 'inline-block';
+            if (fileInput.files[0]) saveBtn.style.display = 'block';
         });
     }
 

@@ -8,21 +8,29 @@ declare(strict_types=1);
     <a href="/pages/index.php" class="back-link">← Back to classes</a>
 
     <article class="profile-hero">
-      <form action="../actions/action_upload_profile_picture.php" method="post" enctype="multipart/form-data" id="avatar-upload-form">
-        <div class="profile-avatar-wrap">
-          <?php if ($user->profile_picture): ?>
-            <img class="profile-avatar-img" src="<?= h($user->getAvatarPath()) ?>" alt="Profile picture" />
-          <?php else: ?>
-            <div class="profile-avatar"><?= h(initials($user->name)) ?></div>
+      <div class="profile-avatar-wrap">
+        <?php if ($user->profile_picture): ?>
+          <img class="profile-avatar-img" src="<?= h($user->getAvatarPath()) ?>" alt="Profile picture" />
+        <?php else: ?>
+          <div class="profile-avatar"><?= h(initials($user->name)) ?></div>
+        <?php endif; ?>
+        <button type="button" class="avatar-edit-overlay" id="avatar-edit-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span>Edit</span>
+        </button>
+        <div class="avatar-edit-menu" id="avatar-edit-menu">
+          <form action="../actions/action_upload_profile_picture.php" method="post" enctype="multipart/form-data" id="avatar-upload-form">
+            <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" />
+            <label for="profile_picture" class="avatar-menu-item">Change photo</label>
+            <button type="submit" class="avatar-menu-item avatar-menu-save" id="avatar-upload-btn" style="display:none">Save photo</button>
+          </form>
+          <?php if ($user->profile_picture && $user->profile_picture !== '/docs/profile_pictures/default.jpg'): ?>
+            <form action="../actions/action_remove_profile_picture.php" method="post">
+              <button type="submit" class="avatar-menu-item avatar-menu-remove">Remove photo</button>
+            </form>
           <?php endif; ?>
-          <label for="profile_picture" class="avatar-edit-overlay" title="Change profile picture">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            <span>Editar</span>
-          </label>
-          <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" />
         </div>
-        <button type="submit" class="avatar-upload-btn" id="avatar-upload-btn" style="display:none">Guardar foto</button>
-      </form>
+      </div>
       <div class="profile-hero-text">
         <h2><?= h($user->name) ?></h2>
         <p><?= h($user->username) ?></p>
