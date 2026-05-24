@@ -18,6 +18,52 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 </div>
 <?php } ?>
 
+<?php function drawEquipmentBanner(array $equipment, Session $session): void {
+    if (!$session->isLoggedIn()) return;
+
+    $avail_units = array_sum(array_map(fn($e) => $e->quantity - $e->in_use, array_filter($equipment, fn($e) => $e->isAvailable())));
+    $total_units = array_sum(array_map(fn($e) => $e->quantity, $equipment));
+    $types_avail = array_filter($equipment, fn($e) => $e->isAvailable());
+
+    // group by type for the mini summary
+    $by_type = [];
+    foreach ($types_avail as $e) {
+        $by_type[$e->type] = ($by_type[$e->type] ?? 0) + ($e->quantity - $e->in_use);
+    }
+?>
+<a href="/pages/equipment.php" class="equip-banner">
+  <div class="equip-banner-left">
+    <div class="equip-banner-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/><path d="M4 8h2v8H4zM18 8h2v8h-2z"/><path d="M2 10h2v4H2zM20 10h2v4h-2z"/></svg>
+    </div>
+    <div class="equip-banner-text">
+      <span class="equip-banner-title">Training Area</span>
+      <span class="equip-banner-sub">
+        <?php if ($avail_units > 0): ?>
+          <?= $avail_units ?> of <?= $total_units ?> units available now
+        <?php else: ?>
+          Check equipment availability
+        <?php endif; ?>
+      </span>
+    </div>
+  </div>
+  <div class="equip-banner-types">
+    <?php foreach (array_slice($by_type, 0, 3, true) as $type => $count): ?>
+      <span class="equip-banner-tag">
+        <span class="equip-banner-tag-dot"></span>
+        <?= h($type) ?> <strong><?= $count ?></strong>
+      </span>
+    <?php endforeach; ?>
+    <?php if (count($by_type) > 3): ?>
+      <span class="equip-banner-more">+<?= count($by_type) - 3 ?> more</span>
+    <?php endif; ?>
+  </div>
+  <div class="equip-banner-arrow">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </div>
+</a>
+<?php } ?>
+
 <?php function drawClassList(array $classes, array $types, array $trainers, string $filter_type, string $filter_day, string $filter_trainer, string $filter_time) { ?>
   <?php $hasFilter = $filter_type || $filter_day || $filter_trainer || $filter_time; ?>
 

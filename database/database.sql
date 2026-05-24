@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 CREATE TABLE IF NOT EXISTS equipment (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    name         TEXT    NOT NULL,
-    type         TEXT    NOT NULL DEFAULT '',
-    quantity     INTEGER NOT NULL DEFAULT 1,
-    available    INTEGER NOT NULL DEFAULT 1 CHECK(available BETWEEN 0 AND 1)
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    name     TEXT    NOT NULL,
+    type     TEXT    NOT NULL DEFAULT '',
+    quantity INTEGER NOT NULL DEFAULT 1,
+    in_use   INTEGER NOT NULL DEFAULT 0
 );
 
 -- Enrollments
@@ -58,17 +58,6 @@ CREATE TABLE IF NOT EXISTS enrollments (
     created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, class_id)
 );
-
-INSERT INTO equipment (id, name, type, quantity, available) VALUES
-(1, 'Treadmill',      'Cardio',    8, 1),
-(2, 'Stationary Bike','Cardio',    6, 1),
-(3, 'Rowing Machine', 'Cardio',    4, 1),
-(4, 'Barbell Set',    'Weights',  10, 1),
-(5, 'Dumbbell Rack',  'Weights',   5, 1),
-(6, 'Weight Bench',   'Weights',   8, 1),
-(7, 'Pull-up Bar',    'Functional',4, 1),
-(8, 'Kettlebells',    'Functional',12, 1);
-
 
 INSERT INTO users (id, name, username, password, type) VALUES
 (1, 'Admin',           'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
@@ -124,3 +113,13 @@ INSERT INTO reviews (id, class_id, user_id, rating, comment) VALUES
 (4,  1,  8, 5, 'Ana is incredible. The class leaves me feeling refreshed and centered every single time.'),
 (5,  7, 11, 5, 'Marta is an exceptional instructor. My back pain has improved significantly.'),
 (6, 11, 12, 4, 'Intense and fun. João really knows how to keep the energy up throughout the session.');
+
+INSERT INTO equipment (id, name, type, quantity, in_use) VALUES
+(1, 'Treadmill',      'Cardio',    8, 3),
+(2, 'Stationary Bike','Cardio',    6, 0),
+(3, 'Rowing Machine', 'Cardio',    4, 4),
+(4, 'Barbell Set',    'Weights',  10, 2),
+(5, 'Dumbbell Rack',  'Weights',   5, 0),
+(6, 'Weight Bench',   'Weights',   8, 5),
+(7, 'Pull-up Bar',    'Functional',4, 0),
+(8, 'Kettlebells',    'Functional',12, 7);

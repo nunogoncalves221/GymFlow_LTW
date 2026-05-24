@@ -237,7 +237,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
   </div>
   <table class="admin-table">
     <thead>
-      <tr><th>Name</th><th>Type</th><th>Quantity</th><th>Status</th><th>Actions</th></tr>
+      <tr><th>Name</th><th>Type</th><th>Total</th><th>In Use</th><th>Status</th><th>Actions</th></tr>
     </thead>
     <tbody>
       <?php foreach ($equipment as $item) { ?>
@@ -245,9 +245,10 @@ require_once(__DIR__ . '/../database/equipment.class.php');
           <td><?= h($item->name) ?></td>
           <td><?= h($item->type) ?></td>
           <td><?= $item->quantity ?></td>
+          <td><?= $item->in_use ?> / <?= $item->quantity ?></td>
           <td>
-            <span class="badge badge-<?= $item->available ? 'available' : 'unavailable' ?>">
-              <?= $item->available ? 'Available' : 'Unavailable' ?>
+            <span class="badge badge-<?= $item->isAvailable() ? 'available' : 'unavailable' ?>">
+              <?= $item->isAvailable() ? 'Available' : 'Not available' ?>
             </span>
           </td>
           <td class="actions">
@@ -274,14 +275,11 @@ require_once(__DIR__ . '/../database/equipment.class.php');
     <label>Type
       <input type="text" name="type" value="<?= h($item?->type ?? '') ?>" placeholder="e.g. Cardio, Weights">
     </label>
-    <label>Quantity
-      <input type="number" name="quantity" value="<?= $item?->quantity ?? 1 ?>" min="0" required>
+    <label>Total Quantity
+      <input type="number" name="quantity" value="<?= $item?->quantity ?? 1 ?>" min="1" required>
     </label>
-    <label>Available
-      <select name="available">
-        <option value="1" <?= ($item?->available ?? true) ? 'selected' : '' ?>>Yes</option>
-        <option value="0" <?= ($item !== null && !$item->available) ? 'selected' : '' ?>>No</option>
-      </select>
+    <label>In Use
+      <input type="number" name="in_use" value="<?= $item?->in_use ?? 0 ?>" min="0">
     </label>
     <div class="form-actions">
       <button type="submit" class="btn"><?= $isEdit ? 'Save Changes' : 'Add Equipment' ?></button>
