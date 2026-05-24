@@ -21,11 +21,11 @@
 - [x] Edit their profile, including name, username, password, and profile photo.
 
 **Members:**
-- [ ] Browse the schedule of available fitness classes, filtering by type, trainer, day, or time.
-- [ ] Enroll in and cancel enrollment from upcoming classes, subject to capacity limits.
+- [x] Browse the schedule of available fitness classes, filtering by type, trainer, day, or time.
+- [x] Enroll in and cancel enrollment from upcoming classes, subject to capacity limits.
 - [ ] View trainer profiles, including their specializations and the classes they teach.
-- [ ] Check the current availability of equipment in the main training area.
-- [ ] Leave ratings and reviews for classes they have attended.
+- [x] Check the current availability of equipment in the main training area.
+- [x] Leave ratings and reviews for classes they have attended.
 
 **Trainers:**
 - [ ] Manage their public profile, including bio, specializations, and certifications.
