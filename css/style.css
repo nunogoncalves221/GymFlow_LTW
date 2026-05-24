@@ -2319,3 +2319,178 @@ a.btn-book {
 @media (max-width: 400px) {
     .equip-grid { grid-template-columns: 1fr; }
 }
+/* ── Trainers CTA Banner ─────────────────────────────────────── */
+.trainers-cta-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 1rem;
+    transition: border-color 0.18s, background 0.18s;
+}
+
+.trainers-cta-banner:hover {
+    border-color: var(--accent);
+    background: var(--bg-elevated);
+}
+
+.trainers-cta-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--text-muted);
+}
+
+.trainers-cta-left svg {
+    flex-shrink: 0;
+    color: var(--accent);
+}
+
+.trainers-cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.trainers-cta-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.trainers-cta-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.trainers-cta-btn {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    transition: transform 0.15s;
+}
+
+.trainers-cta-banner:hover .trainers-cta-btn {
+    transform: translateX(3px);
+}
+
+/* ── Trainers List Page ──────────────────────────────────────── */
+.trainers-list-page {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.trainers-list-header {
+    margin-bottom: 2rem;
+}
+
+.trainers-list-header h1 {
+    font-family: var(--font-head);
+    font-size: 2.2rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin: 0 0 0.3rem;
+}
+
+.trainers-list-header p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.trainers-list-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.trainer-list-card {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.18s, background 0.18s, transform 0.18s;
+}
+
+.trainer-list-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-elevated);
+    transform: translateX(4px);
+}
+
+.trainer-list-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+}
+
+.trainer-list-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.trainer-list-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+.trainer-list-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.trainer-list-pill {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    background: rgba(232,255,71,0.1);
+    color: var(--accent);
+    letter-spacing: 0.02em;
+}
+
+.trainer-list-bio {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.trainer-list-arrow {
+    font-size: 1rem;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    transition: transform 0.15s, color 0.15s;
+}
+
+.trainer-list-card:hover .trainer-list-arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+}

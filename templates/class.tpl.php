@@ -64,6 +64,21 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 </a>
 <?php } ?>
 
+<?php function drawTrainersBanner(Session $session): void {
+    if (!$session->isLoggedIn()) return;
+?>
+<a href="/pages/trainers.php" class="trainers-cta-banner">
+  <div class="trainers-cta-left">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <div class="trainers-cta-text">
+      <span class="trainers-cta-title">Our Trainers</span>
+      <span class="trainers-cta-sub">Meet the experts behind every class</span>
+    </div>
+  </div>
+  <span class="trainers-cta-btn">View profiles &rarr;</span>
+</a>
+<?php } ?>
+
 <?php function drawClassList(array $classes, array $types, array $trainers, string $filter_type, string $filter_day, string $filter_trainer, string $filter_time) { ?>
   <?php $hasFilter = $filter_type || $filter_day || $filter_trainer || $filter_time; ?>
 
