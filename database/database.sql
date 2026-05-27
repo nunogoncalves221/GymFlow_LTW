@@ -60,18 +60,18 @@ CREATE TABLE IF NOT EXISTS enrollments (
 );
 
 INSERT INTO users (id, name, username, password, type) VALUES
-(1, 'Admin',           'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
-(2, 'Member',          'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
-(3, 'Ana Silva',       'ana',     '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(4, 'Carlos Mota',     'carlos',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(5, 'Marta Lima',      'marta',   '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(6, 'João Pires',      'joao',    '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(7, 'Rita Costa',      'rita',    '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(8, 'Sofia Rodrigues', 'sofia',   '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
-(9, 'Miguel Ferreira', 'miguel',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
-(10,'Inês Marques',    'ines',    '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
-(11,'Beatriz Santos',  'beatriz', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
-(12,'Rui Oliveira',    'rui',     '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member');
+(1, 'Admin',           'admin',   '$2y$10$YiGX7nmnZBTAx0oKm7Bcg.b.FjaSU0O7qZA/uvF8VCKA/FNI.uk0S', 'admin'),
+(2, 'Member',          'member',  '$2y$10$sJLmymNsI.hUjzCkeEsk/Os9H3iKqg/nuefPdKvpPVBrj/cua4gSO', 'member'),
+(3, 'Ana Silva',       'ana',     '$2y$10$W3tzUEUSrbm2.s4.78dKdOqw.WcyFlmOpxVUx/449Av/51.yLaGKG', 'trainer'),
+(4, 'Carlos Mota',     'carlos',  '$2y$10$v.dUaXE2XMuV/bMBGzxwPOP9Xz1RAs.5GL1LBduzX3L/7Fw3oCoje', 'trainer'),
+(5, 'Marta Lima',      'marta',   '$2y$10$9UZW2joJ0p8j6q9zWAohEODyB342yrCYxxNO9JDMFM98KpXq54/42', 'trainer'),
+(6, 'João Pires',      'joao',    '$2y$10$uUNef1H0.g/QY9McyeM9eu7Lt5XgZ.ZQPUzmvWb.WRy10OnsotjAy', 'trainer'),
+(7, 'Rita Costa',      'rita',    '$2y$10$dL3FIuZ3zj4RqcQzSgHaU.D0GFJC95STGxuAbhi9CIfmLQ1ZDiKSi', 'trainer'),
+(8, 'Sofia Rodrigues', 'sofia',   '$2y$10$km9lyo8wbGlC5cyKnSdhDeTNcriPCXYu0B9sQAKEpqMnw495GrhkO', 'member'),
+(9, 'Miguel Ferreira', 'miguel',  '$2y$10$x2wFhhUF/zjGZhWvx.ZoVetILdqo2EDHCuejUUx9sC/3pUpYm1nzS', 'member'),
+(10,'Inês Marques',    'ines',    '$2y$10$0bvCm/v9C/zqsWQBmDtAa.6DDadUJhvYdc8/G1a5ab35gQjh7U2/e', 'member'),
+(11,'Beatriz Santos',  'beatriz', '$2y$10$30vWYynxk8v/Hext3q03IuFa3T3ZR0TAOHVgMoMc2YioVS1RTivri', 'member'),
+(12,'Rui Oliveira',    'rui',     '$2y$10$ndNHuZC.EYka6BhcmvNXCOxlkfNRpXajuJ8hgiGk0f7mP6C5EiUnq', 'member');
 
 -- Trainers
 INSERT INTO trainers (id, name, bio, specializations, certifications, user_id) VALUES

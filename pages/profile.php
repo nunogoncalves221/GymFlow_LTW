@@ -13,6 +13,10 @@ require_once('../templates/profile.tpl.php');
 require_once('../database/trainer.class.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'logout') {
+    if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $session->addMessage('error', 'Invalid request.');
+        header('Location: /pages/profile.php'); exit;
+    }
     $session->logout();
     header('Location: /pages/index.php'); exit;
 }
@@ -22,5 +26,5 @@ $user = User::getUser($db, $session->getId());
 $trainer = $user->type === 'trainer' ? Trainer::getTrainerByUserId($db, $user->id) : null;
 
 drawHeader($session, 'GymFlow — My Profile');
-drawProfileForm($user, $trainer);
+drawProfileForm($user, $trainer, $session);
 drawFooter();

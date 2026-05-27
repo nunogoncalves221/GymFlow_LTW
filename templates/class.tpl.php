@@ -204,6 +204,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 
       <?php elseif ($session->getType() === 'member' && $is_enrolled): ?>
         <form method="POST" action="/actions/action_cancel_enrollment.php">
+          <?= $session->csrfField() ?>
           <input type="hidden" name="class_id" value="<?= $class->id ?>">
           <button type="submit" class="btn-book btn-cancel">Cancel enrollment</button>
         </form>
@@ -213,6 +214,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 
       <?php elseif ($session->getType() === 'member'): ?>
         <form method="POST" action="/actions/action_enroll.php">
+          <?= $session->csrfField() ?>
           <input type="hidden" name="class_id" value="<?= $class->id ?>">
           <button type="submit" class="btn-book">Book a spot</button>
         </form>
@@ -231,6 +233,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
           <?= h($class->name) ?> · <?= h($class->day_of_week) ?> · <?= h($class->time) ?>
         </p>
         <form method="POST" action="/actions/action_submit_review.php" class="review-form">
+          <?= $session->csrfField() ?>
           <input type="hidden" name="class_id" value="<?= $class->id ?>">
           <div class="star-picker" id="star-picker">
             <?php for ($i = 5; $i >= 1; $i--): ?>

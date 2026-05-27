@@ -6,6 +6,11 @@ $session = new Session();
 
 if (!$session->isLoggedIn()) { header('Location: /pages/login.php'); exit; }
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: /pages/profile.php'); exit;
+}
+
 require_once(__DIR__ . '/../database/connection.db.php');
 require_once(__DIR__ . '/../database/user.class.php');
 

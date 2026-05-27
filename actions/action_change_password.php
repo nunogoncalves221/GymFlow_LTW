@@ -6,6 +6,11 @@ $session = new Session();
 
 if (!$session->isLoggedIn()) { header('Location: /pages/login.php'); exit; }
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: /pages/profile.php'); exit;
+}
+
 require_once(__DIR__ . '/../database/connection.db.php');
 require_once(__DIR__ . '/../database/user.class.php');
 
@@ -28,7 +33,7 @@ if ($new !== $confirm) {
 }
 
 $stmt = $db->prepare('UPDATE users SET password = ? WHERE id = ?');
-$stmt->execute([sha1($new), $session->getId()]);
+$stmt->execute([password_hash($new, PASSWORD_DEFAULT), $session->getId()]);
 
 $session->addMessage('success', 'Password updated.');
 header('Location: /pages/profile.php');

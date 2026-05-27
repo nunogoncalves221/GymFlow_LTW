@@ -10,6 +10,11 @@ if (!$session->isLoggedIn() || $session->getType() !== 'member') {
     exit;
 }
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: /pages/index.php'); exit;
+}
+
 require_once('../database/connection.db.php');
 require_once('../database/fitnessclass.class.php');
 require_once('../database/review.class.php');

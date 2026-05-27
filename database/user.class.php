@@ -17,17 +17,18 @@ class User {
     }
 
     static function getUserWithPassword(PDO $db, string $username, string $password): ?User {
-        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture FROM users WHERE username = ? AND password = ?');
-        $stmt->execute([$username, sha1($password)]);
+        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture, password FROM users WHERE username = ?');
+        $stmt->execute([$username]);
         $row = $stmt->fetch();
-        if ($row) return new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture']);
+        if ($row && password_verify($password, $row['password']))
+            return new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture']);
         return null;
     }
 
     static function register(PDO $db, string $name, string $username, string $password): bool {
         try {
             $stmt = $db->prepare('INSERT INTO users (name, username, password, type) VALUES (?, ?, ?, \'member\')');
-            $stmt->execute([$name, $username, sha1($password)]);
+            $stmt->execute([$name, $username, password_hash($password, PASSWORD_DEFAULT)]);
             return true;
         } catch (PDOException $e) {
             return false;
@@ -79,7 +80,7 @@ class User {
     static function createWithType(PDO $db, string $name, string $username, string $password, string $type): bool {
         try {
             $stmt = $db->prepare('INSERT INTO users (name, username, password, type) VALUES (?, ?, ?, ?)');
-            $stmt->execute([$name, $username, sha1($password), $type]);
+            $stmt->execute([$name, $username, password_hash($password, PASSWORD_DEFAULT), $type]);
             return true;
         } catch (PDOException $e) {
             return false;

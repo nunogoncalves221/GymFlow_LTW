@@ -10,6 +10,11 @@ if (!$session->isLoggedIn()) {
     exit;
 }
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/pages/index.php')); exit;
+}
+
 require_once(__DIR__ . '/../database/connection.db.php');
 require_once(__DIR__ . '/../database/user.class.php');
 require_once(__DIR__ . '/../database/fitnessclass.class.php');

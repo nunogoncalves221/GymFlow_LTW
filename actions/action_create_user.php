@@ -7,6 +7,11 @@ $session = new Session();
 if (!$session->isLoggedIn() || $session->getType() !== 'admin')
     die(header('Location: /pages/login.php'));
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: /pages/admin_users.php'); exit;
+}
+
 require_once(__DIR__ . '/../database/connection.db.php');
 require_once(__DIR__ . '/../database/user.class.php');
 require_once(__DIR__ . '/../database/trainer.class.php');
