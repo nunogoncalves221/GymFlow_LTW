@@ -63,4 +63,4 @@ require_once(__DIR__ . '/../utils/session.php');
   </footer>
 </body>
 </html>
-<?php } ?>
+<?php } ?> 

@@ -275,4 +275,4 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
     </section>
 
   </section>
-<?php } ?>
+<?php } ?> 

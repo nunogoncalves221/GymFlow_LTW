@@ -27,4 +27,4 @@ drawHeroBanner();
 drawTrainersBanner($session);
 drawEquipmentBanner($equipment, $session);
 drawClassList($classes, $types, $trainers, $filter_type, $filter_day, $filter_trainer, $filter_time);
-drawFooter();
+drawFooter(); 
