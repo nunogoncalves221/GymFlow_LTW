@@ -249,13 +249,45 @@ if (!function_exists('buildCalendarRows')) {
         <?php endif; ?>
       <?php endforeach; ?>
 
+      <?php
+        $classLanes = []; $classHasOverlap = [];
+        $byDayArr = [];
+        foreach ($classes as $c) $byDayArr[$c->day_of_week][] = $c;
+        foreach ($byDayArr as $_day => $dcs) {
+            usort($dcs, fn($a, $b) => strcmp($a->time, $b->time));
+            $laneEnd = [];
+            foreach ($dcs as $c) {
+                [$h, $m] = array_map('intval', explode(':', $c->time));
+                $s = $h * 60 + $m; $e = $s + $c->duration_min;
+                $ln = -1;
+                foreach ($laneEnd as $l => $le) { if ($le <= $s) { $ln = $l; break; } }
+                if ($ln < 0) $ln = count($laneEnd);
+                $laneEnd[$ln] = $e;
+                $classLanes[$c->id] = $ln;
+            }
+            foreach ($dcs as $ci) {
+                [$hi, $mi] = array_map('intval', explode(':', $ci->time));
+                $si = $hi*60+$mi; $ei = $si + $ci->duration_min;
+                foreach ($dcs as $cj) {
+                    if ($ci->id === $cj->id) continue;
+                    [$hj, $mj] = array_map('intval', explode(':', $cj->time));
+                    $sj = $hj*60+$mj; $ej = $sj + $cj->duration_min;
+                    if ($si < $ej && $ei > $sj) { $classHasOverlap[$ci->id] = true; break; }
+                }
+            }
+        }
+      ?>
       <?php foreach ($classes as $class):
         $row  = $cal['timeToRow'][$class->time] ?? 2;
         $span = max(1, (int)ceil($class->duration_min / 30));
         $col  = $dayToCol[$class->day_of_week] ?? 2;
+        $lane = $classLanes[$class->id] ?? 0;
+        $marginExtra = !empty($classHasOverlap[$class->id])
+            ? ($lane === 0 ? ';margin-right:50%' : ';margin-left:50%')
+            : '';
       ?>
         <a href="/pages/class.php?id=<?= $class->id ?>" class="cal-class-card"
-           style="grid-column:<?= $col ?>;grid-row:<?= $row ?>/span <?= $span ?>">
+           style="grid-column:<?= $col ?>;grid-row:<?= $row ?>/span <?= $span ?><?= $marginExtra ?>">
           <div class="cal-class-name"><?= h($class->name) ?></div>
           <div class="cal-class-time"><?= h($class->time) ?></div>
         </a>

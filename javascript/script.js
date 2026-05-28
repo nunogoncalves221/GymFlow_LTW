@@ -266,7 +266,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var viewScheduleEl  = document.getElementById('view-schedule');
 
     if (btnViewClasses && btnViewSchedule) {
+        if (sessionStorage.getItem('classView') === 'schedule') {
+            btnViewSchedule.classList.add('active');
+            btnViewClasses.classList.remove('active');
+            viewClassesEl.style.display = 'none';
+            viewScheduleEl.style.display = '';
+        }
+
         btnViewClasses.addEventListener('click', function () {
+            sessionStorage.setItem('classView', 'classes');
             btnViewClasses.classList.add('active');
             btnViewSchedule.classList.remove('active');
             viewClassesEl.style.display = '';
@@ -274,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         btnViewSchedule.addEventListener('click', function () {
+            sessionStorage.setItem('classView', 'schedule');
             btnViewSchedule.classList.add('active');
             btnViewClasses.classList.remove('active');
             viewClassesEl.style.display = 'none';
