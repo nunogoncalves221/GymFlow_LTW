@@ -223,4 +223,62 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-}); 
+    // ── Class cards index page modal ──────────────────────────────
+    var classInfoModal = document.getElementById('class-info-modal');
+    if (classInfoModal) {
+        document.querySelectorAll('.class-card[data-sessions]').forEach(function (card) {
+            card.addEventListener('click', function () {
+                document.getElementById('cim-name').textContent        = this.dataset.name;
+                document.getElementById('cim-type').textContent        = this.dataset.type;
+                document.getElementById('cim-description').textContent = this.dataset.description;
+                document.getElementById('cim-trainers').textContent    = this.dataset.trainers;
+
+                var sessions = JSON.parse(this.dataset.sessions);
+                var tbody = document.getElementById('cim-sessions');
+                tbody.innerHTML = '';
+                sessions.forEach(function (s) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = '<td>' + s.day + '</td>' +
+                        '<td>' + s.time + '</td>' +
+                        '<td>' + s.duration + ' min</td>' +
+                        '<td>' + s.enrolled + ' / ' + s.capacity + '</td>' +
+                        '<td><a href="/pages/class.php?id=' + s.id + '" class="btn-see-more">See more</a></td>';
+                    tbody.appendChild(tr);
+                });
+
+                classInfoModal.style.display = 'flex';
+            });
+        });
+
+        document.getElementById('class-modal-close').addEventListener('click', function () {
+            classInfoModal.style.display = 'none';
+        });
+
+        classInfoModal.addEventListener('click', function (e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+    }
+
+    // ── View toggle (Classes / Schedule) ─────────────────────────
+    var btnViewClasses  = document.getElementById('btn-view-classes');
+    var btnViewSchedule = document.getElementById('btn-view-schedule');
+    var viewClassesEl   = document.getElementById('view-classes');
+    var viewScheduleEl  = document.getElementById('view-schedule');
+
+    if (btnViewClasses && btnViewSchedule) {
+        btnViewClasses.addEventListener('click', function () {
+            btnViewClasses.classList.add('active');
+            btnViewSchedule.classList.remove('active');
+            viewClassesEl.style.display = '';
+            viewScheduleEl.style.display = 'none';
+        });
+
+        btnViewSchedule.addEventListener('click', function () {
+            btnViewSchedule.classList.add('active');
+            btnViewClasses.classList.remove('active');
+            viewClassesEl.style.display = 'none';
+            viewScheduleEl.style.display = '';
+        });
+    }
+
+});

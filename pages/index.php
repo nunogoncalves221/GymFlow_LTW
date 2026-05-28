@@ -22,9 +22,14 @@ $types     = FitnessClass::getTypes($db);
 $trainers  = FitnessClass::getTrainersForFilter($db);
 $equipment = Equipment::getAll($db);
 
+$enrollment_counts = [];
+foreach ($classes as $c) {
+    $enrollment_counts[$c->id] = FitnessClass::getEnrolledCount($db, $c->id);
+}
+
 drawHeader($session, 'GymFlow — Classes');
 drawHeroBanner();
 drawTrainersBanner($session);
 drawEquipmentBanner($equipment, $session);
-drawClassList($classes, $types, $trainers, $filter_type, $filter_day, $filter_trainer, $filter_time);
+drawClassList($classes, $types, $trainers, $filter_type, $filter_day, $filter_trainer, $filter_time, $enrollment_counts);
 drawFooter();
