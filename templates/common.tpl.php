@@ -43,9 +43,11 @@ require_once(__DIR__ . '/../utils/session.php');
       <a href="/pages/membership.php" class="btn-profile">Plans</a>
     <?php endif; ?>
     <?php if ($session->getType() === 'trainer'): ?>
+      <a href="/pages/membership.php" class="btn-profile">Plans</a>
       <a href="/pages/trainer_dashboard.php" class="btn-profile">Dashboard</a>
     <?php endif; ?>
     <?php if ($session->getType() === 'admin'): ?>
+      <a href="/pages/membership.php" class="btn-profile">Plans</a>
       <a href="../pages/admin.php" class="btn-admin-icon" title="Admin Dashboard">
         <img src="../docs/icons/admin-dashboard.png" alt="Admin Dashboard">
       </a>
@@ -63,4 +65,4 @@ require_once(__DIR__ . '/../utils/session.php');
   </footer>
 </body>
 </html>
-<?php } ?> 
+<?php } ?>

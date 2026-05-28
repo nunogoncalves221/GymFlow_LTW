@@ -9,9 +9,14 @@ declare(strict_types=1);
 
   <div class="membership-header">
     <h2>Membership Plans</h2>
+    <?php if ($user->type === 'member'): ?>
     <p class="membership-subtitle">Choose the plan that fits your goals. Request a plan and an admin will activate it for you.</p>
+    <?php else: ?>
+    <p class="membership-subtitle">Overview of available membership plans.</p>
+    <?php endif; ?>
   </div>
 
+  <?php if ($user->type === 'member'): ?>
   <?php if ($current): ?>
     <div class="membership-current-banner">
       <span class="membership-current-label">Your current plan</span>
@@ -30,11 +35,11 @@ declare(strict_types=1);
       <span>⚠ You don't have an active membership plan. Choose one below to start enrolling in classes.</span>
     </div>
   <?php endif; ?>
-
   <?php if ($pending): ?>
     <div class="membership-pending-banner">
       <span>⏳ You have a pending request for the <strong><?= h($pending['plan_name']) ?></strong> plan, submitted on <?= h(substr($pending['created_at'], 0, 10)) ?>. Waiting for admin approval.</span>
     </div>
+  <?php endif; ?>
   <?php endif; ?>
 
   <div class="membership-plans-grid">
