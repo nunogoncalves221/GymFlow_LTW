@@ -20,24 +20,28 @@ $action = $_GET['action'] ?? '';
 drawHeader($session, 'Classes — Admin');
 drawAdminNav('classes');
 
-if ($action === 'create') {
+if (($_POST['action'] ?? '') === 'delete') {
+    if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $session->addMessage('error', 'Invalid request.');
+        header('Location: ../pages/admin_classes.php'); exit;
+    }
+    FitnessClass::delete($db, (int)($_POST['id'] ?? 0));
+    $session->addMessage('success', 'Class deleted');
+    header('Location: ../pages/admin_classes.php'); exit;
+} elseif ($action === 'create') {
     $trainers = Trainer::getTrainers($db);
-    drawClassForm(null, $trainers);
+    drawClassForm(null, $trainers, $session);
 } elseif ($action === 'edit' && isset($_GET['id'])) {
     $class    = FitnessClass::getClass($db, (int)$_GET['id']);
     $trainers = Trainer::getTrainers($db);
-    if ($class) drawClassForm($class, $trainers);
+    if ($class) drawClassForm($class, $trainers, $session);
     else {
         $session->addMessage('error', 'Class not found');
         header('Location: ../pages/admin_classes.php');
     }
-} elseif ($action === 'delete' && isset($_GET['id'])) {
-    FitnessClass::delete($db, (int)$_GET['id']);
-    $session->addMessage('success', 'Class deleted');
-    header('Location: ../pages/admin_classes.php');
 } else {
     $classes = FitnessClass::getClasses($db);
-    drawClassList($classes);
+    drawClassList($classes, $session);
 }
 
 drawFooter();

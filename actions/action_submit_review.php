@@ -10,6 +10,11 @@ if (!$session->isLoggedIn() || $session->getType() !== 'member') {
     exit;
 }
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: /pages/index.php'); exit;
+}
+
 require_once('../database/connection.db.php');
 require_once('../database/fitnessclass.class.php');
 require_once('../database/review.class.php');
@@ -32,7 +37,7 @@ if (!FitnessClass::isEnrolled($db, $session->getId(), $class_id)) {
     exit;
 }
 
-$result = Review::create($db, $class_id, $session->getId(), $session->getName(), $rating, $comment);
+$result = Review::create($db, $class_id, $session->getId(), $rating, $comment);
 [$type, $text] = explode(':', $result, 2);
 $session->addMessage($type, $text);
 

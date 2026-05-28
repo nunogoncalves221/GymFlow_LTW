@@ -6,20 +6,24 @@ class Equipment {
     public string $name;
     public string $type;
     public int $quantity;
-    public bool $available;
+    public int $in_use;
 
-    public function __construct(int $id, string $name, string $type, int $quantity, bool $available) {
-        $this->id        = $id;
-        $this->name      = $name;
-        $this->type      = $type;
-        $this->quantity  = $quantity;
-        $this->available = $available;
+    public function __construct(int $id, string $name, string $type, int $quantity, int $in_use) {
+        $this->id       = $id;
+        $this->name     = $name;
+        $this->type     = $type;
+        $this->quantity = $quantity;
+        $this->in_use   = $in_use;
+    }
+
+    public function isAvailable(): bool {
+        return $this->in_use < $this->quantity;
     }
 
     private static function fromRow(array $row): Equipment {
         return new Equipment(
             (int)$row['id'], $row['name'], $row['type'],
-            (int)$row['quantity'], (bool)$row['available']
+            (int)$row['quantity'], (int)$row['in_use']
         );
     }
 
@@ -37,14 +41,14 @@ class Equipment {
         return $row ? self::fromRow($row) : null;
     }
 
-    static function create(PDO $db, string $name, string $type, int $quantity, bool $available): void {
-        $stmt = $db->prepare('INSERT INTO equipment (name, type, quantity, available) VALUES (?, ?, ?, ?)');
-        $stmt->execute([$name, $type, $quantity, (int)$available]);
+    static function create(PDO $db, string $name, string $type, int $quantity, int $in_use): void {
+        $stmt = $db->prepare('INSERT INTO equipment (name, type, quantity, in_use) VALUES (?, ?, ?, ?)');
+        $stmt->execute([$name, $type, $quantity, $in_use]);
     }
 
     function save(PDO $db): void {
-        $stmt = $db->prepare('UPDATE equipment SET name = ?, type = ?, quantity = ?, available = ? WHERE id = ?');
-        $stmt->execute([$this->name, $this->type, $this->quantity, (int)$this->available, $this->id]);
+        $stmt = $db->prepare('UPDATE equipment SET name = ?, type = ?, quantity = ?, in_use = ? WHERE id = ?');
+        $stmt->execute([$this->name, $this->type, $this->quantity, $this->in_use, $this->id]);
     }
 
     static function delete(PDO $db, int $id): void {

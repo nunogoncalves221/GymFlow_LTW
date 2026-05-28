@@ -39,6 +39,9 @@ require_once(__DIR__ . '/../utils/session.php');
 
 <?php function drawLogoutForm(Session $session) { ?>
   <div class="header-user-actions">
+    <?php if ($session->getType() === 'member'): ?>
+      <a href="/pages/membership.php" class="btn-profile">Plans</a>
+    <?php endif; ?>
     <?php if ($session->getType() === 'trainer'): ?>
       <a href="/pages/trainer_dashboard.php" class="btn-profile">Dashboard</a>
     <?php endif; ?>

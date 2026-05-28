@@ -1,6 +1,159 @@
+function applySelectFilter(param, value) {
+    var url = new URL(window.location.href);
+    if (value) url.searchParams.set(param, value); else url.searchParams.delete(param);
+    window.location.href = url.toString();
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Trainer dashboard calendar modal
+    // ── Flash message auto-dismiss ─────────────────────────────────────────
+    document.querySelectorAll('.flash').forEach(function (flash) {
+        var timer = setTimeout(function () { dismissFlash(flash); }, 4000);
+        flash.style.cursor = 'pointer';
+        flash.title = 'Click to dismiss';
+        flash.addEventListener('click', function () {
+            clearTimeout(timer);
+            dismissFlash(flash);
+        });
+    });
+
+    function dismissFlash(el) {
+        el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        el.style.opacity    = '0';
+        el.style.transform  = 'translateY(-6px)';
+        setTimeout(function () {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        }, 420);
+    }
+
+    // ── Report form: character counter + submit confirmation ───────────────
+    var reportTextarea = document.querySelector('.disputes-page .dispute-textarea');
+    if (reportTextarea) {
+        var counter = document.createElement('span');
+        counter.className = 'dispute-char-counter';
+        counter.setAttribute('aria-live', 'polite');
+        reportTextarea.parentNode.appendChild(counter);
+
+        function updateCounter() {
+            var len = reportTextarea.value.length;
+            var min = 10;
+            counter.textContent = len < min
+                ? (min - len) + ' more character' + (min - len !== 1 ? 's' : '') + ' required'
+                : len + ' character' + (len !== 1 ? 's' : '');
+            counter.classList.toggle('dispute-char-counter--ok',  len >= min);
+            counter.classList.toggle('dispute-char-counter--bad', len > 0 && len < min);
+        }
+        reportTextarea.addEventListener('input', updateCounter);
+        updateCounter();
+
+        var reportForm = reportTextarea.closest('form');
+        if (reportForm) {
+            reportForm.addEventListener('submit', function (e) {
+                var category = reportForm.querySelector('select[name="category"]');
+                var catLabel = category && category.options[category.selectedIndex]
+                    ? category.options[category.selectedIndex].text
+                    : 'Unknown';
+                if (!confirm('Submit a report under "' + catLabel + '"?\n\nAn admin will review it shortly.')) {
+                    e.preventDefault();
+                }
+            });
+        }
+    }
+
+    // ── Password confirmation validator ────────────────────────────────────
+    var newPw     = document.getElementById('newPw');
+    var confirmPw = document.getElementById('confirmPw');
+
+    if (newPw && confirmPw) {
+        var pwMsg = document.createElement('span');
+        pwMsg.className = 'pw-match-msg';
+        confirmPw.parentNode.appendChild(pwMsg);
+
+        function checkPasswords() {
+            var a = newPw.value;
+            var b = confirmPw.value;
+            if (!b) {
+                pwMsg.textContent = '';
+                confirmPw.setCustomValidity('');
+                return;
+            }
+            if (a === b) {
+                pwMsg.textContent = '✓ Passwords match';
+                pwMsg.className   = 'pw-match-msg pw-match-msg--ok';
+                confirmPw.setCustomValidity('');
+            } else {
+                pwMsg.textContent = '✗ Passwords do not match';
+                pwMsg.className   = 'pw-match-msg pw-match-msg--bad';
+                confirmPw.setCustomValidity('Passwords do not match');
+            }
+        }
+
+        newPw.addEventListener('input', checkPasswords);
+        confirmPw.addEventListener('input', checkPasswords);
+    }
+
+    // ── Staggered card entrance animation ─────────────────────────────────
+    document.querySelectorAll('.class-card').forEach(function (card, i) {
+        card.style.animationDelay = (i * 0.045) + 's';
+    });
+
+    // ── Live search — filters class cards client-side ──────────────────────
+    var searchInput  = document.getElementById('class-search');
+    var resultsCount = document.getElementById('filter-results-count');
+    var cards        = Array.from(document.querySelectorAll('.class-card'));
+    var grid         = document.querySelector('.classes-grid');
+
+    if (searchInput && cards.length) {
+        var phpCount  = resultsCount ? resultsCount.textContent.trim() : null;
+        var searchMsg = null;
+
+        searchInput.addEventListener('input', function () {
+            var q = this.value.trim().toLowerCase();
+            var visible = 0;
+
+            cards.forEach(function (card) {
+                var matches = !q || card.textContent.toLowerCase().includes(q);
+                card.style.display = matches ? '' : 'none';
+                if (matches) visible++;
+            });
+
+            if (resultsCount) {
+                if (q) {
+                    resultsCount.textContent = visible + ' class' + (visible !== 1 ? 'es' : '') + ' found';
+                    resultsCount.style.display = '';
+                } else {
+                    resultsCount.textContent = phpCount || '';
+                    resultsCount.style.display = phpCount ? '' : 'none';
+                }
+            }
+
+            if (!searchMsg) {
+                searchMsg = document.createElement('p');
+                searchMsg.className = 'no-results';
+                searchMsg.style.display = 'none';
+                grid.prepend(searchMsg);
+            }
+            searchMsg.innerHTML = 'No classes match &ldquo;<strong>' + escapeHtml(q) + '</strong>&rdquo;. <a href="#" class="filter-clear-inline" id="clear-search-btn">Clear search</a>';
+            searchMsg.style.display = (visible === 0 && q) ? '' : 'none';
+
+            var clearBtn = document.getElementById('clear-search-btn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    searchInput.value = '';
+                    searchInput.dispatchEvent(new Event('input'));
+                });
+            }
+        });
+    }
+
+    function escapeHtml(str) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(str));
+        return d.innerHTML;
+    }
+
+    // ── Trainer dashboard calendar modal ──────────────────────────────────
     const modal = document.getElementById('class-modal');
     if (modal) {
         document.querySelectorAll('.cal-class-card').forEach(function (card) {
@@ -43,24 +196,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Profile picture preview
+    // ── Profile picture preview ────────────────────────────────────────────
+    const editBtn  = document.getElementById('avatar-edit-btn');
+    const editMenu = document.getElementById('avatar-edit-menu');
     const fileInput = document.getElementById('profile_picture');
-    if (fileInput) {
-        const preview = document.querySelector('.profile-picture-preview');
-        const hint    = fileInput.closest('form') ? fileInput.closest('form').querySelector('.upload-hint') : null;
+    const saveBtn   = document.getElementById('avatar-upload-btn');
 
+    if (editBtn && editMenu) {
+        editBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            editMenu.classList.toggle('open');
+            editBtn.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function () {
+            editMenu.classList.remove('open');
+            editBtn.classList.remove('active');
+        });
+
+        editMenu.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+
+    if (fileInput && saveBtn) {
         fileInput.addEventListener('change', function () {
-            const file = fileInput.files[0];
-            if (!file) return;
-
-            if (preview) {
-                const reader = new FileReader();
-                reader.onload = function (e) { preview.src = e.target.result; };
-                reader.readAsDataURL(file);
-            }
-
-            if (hint) hint.textContent = file.name;
+            if (fileInput.files[0]) saveBtn.style.display = 'block';
         });
     }
 
-});
+}); 

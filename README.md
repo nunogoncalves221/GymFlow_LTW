@@ -16,16 +16,16 @@
 ## Features
 
 **All users:**
-- [ ] Register a new account.
-- [ ] Log in and out.
-- [ ] Edit their profile, including name, username, password, and profile photo.
+- [x] Register a new account.
+- [x] Log in and out.
+- [x] Edit their profile, including name, username, password, and profile photo.
 
 **Members:**
-- [ ] Browse the schedule of available fitness classes, filtering by type, trainer, day, or time.
-- [ ] Enroll in and cancel enrollment from upcoming classes, subject to capacity limits.
-- [ ] View trainer profiles, including their specializations and the classes they teach.
-- [ ] Check the current availability of equipment in the main training area.
-- [ ] Leave ratings and reviews for classes they have attended.
+- [x] Browse the schedule of available fitness classes, filtering by type, trainer, day, or time.
+- [x] Enroll in and cancel enrollment from upcoming classes, subject to capacity limits.
+- [x] View trainer profiles, including their specializations and the classes they teach.
+- [x] Check the current availability of equipment in the main training area.
+- [x] Leave ratings and reviews for classes they have attended.
 
 **Trainers:**
 - [ ] Manage their public profile, including bio, specializations, and certifications.
@@ -33,14 +33,17 @@
 - [ ] Track and manage their assigned class schedule.
 
 **Admins:**
-- [ ] Manage members and trainers (create, update, and deactivate accounts).
-- [ ] Manage the class catalog (create, edit, and remove classes) and assign trainers to them.
-- [ ] Manage equipment in the main training area (add, update availability status, and remove items).
-- [ ] Elevate a user to admin status.
+- [x] Manage members and trainers (create, update, and deactivate accounts).
+- [x] Manage the class catalog (create, edit, and remove classes) and assign trainers to them.
+- [x] Manage equipment in the main training area (add, update availability status, and remove items).
+- [x] Elevate a user to admin status.
 - [ ] Oversee and ensure the smooth operation of the entire system.
 
 **Extra:**
-- [ ] Something extra (e.g., personal training bookings, membership plans, waitlist, ...).
+- [ ] Personal Training Bookings
+- [x] Membership Plans
+- [x] Disputes and Feedback
+- [ ] Nutrition Plans
 
 ## Running
 

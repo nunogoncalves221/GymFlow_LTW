@@ -2,11 +2,12 @@
 declare(strict_types=1);
 ?>
 
-<?php function drawLoginPage() { ?>
+<?php function drawLoginPage(Session $session) { ?>
   <section class="auth-page">
     <article class="auth-card">
       <h2>Login</h2>
       <form action="../actions/action_login.php" method="post">
+        <?= $session->csrfField() ?>
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" required />

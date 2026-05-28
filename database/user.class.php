@@ -7,27 +7,30 @@ class User {
     public string $username;
     public string $type;
     public ?string $profile_picture;
+    public ?int $plan_id;
 
-    public function __construct(int $id, string $name, string $username, string $type, ?string $profile_picture = null) {
+    public function __construct(int $id, string $name, string $username, string $type, ?string $profile_picture = null, ?int $plan_id = null) {
         $this->id              = $id;
         $this->name            = $name;
         $this->username        = $username;
         $this->type            = $type;
         $this->profile_picture = $profile_picture;
+        $this->plan_id         = $plan_id;
     }
 
     static function getUserWithPassword(PDO $db, string $username, string $password): ?User {
-        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture FROM users WHERE username = ? AND password = ?');
-        $stmt->execute([$username, sha1($password)]);
+        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture, password, plan_id FROM users WHERE username = ?');
+        $stmt->execute([$username]);
         $row = $stmt->fetch();
-        if ($row) return new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture']);
+        if ($row && password_verify($password, $row['password']))
+            return new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture'], isset($row['plan_id']) ? (int)$row['plan_id'] : null);
         return null;
     }
 
     static function register(PDO $db, string $name, string $username, string $password): bool {
         try {
             $stmt = $db->prepare('INSERT INTO users (name, username, password, type) VALUES (?, ?, ?, \'member\')');
-            $stmt->execute([$name, $username, sha1($password)]);
+            $stmt->execute([$name, $username, password_hash($password, PASSWORD_DEFAULT)]);
             return true;
         } catch (PDOException $e) {
             return false;
@@ -53,21 +56,21 @@ class User {
     }
 
     static function getUser(PDO $db, int $id): ?User {
-        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture FROM users WHERE id = ?');
+        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture, plan_id FROM users WHERE id = ?');
         $stmt->execute([$id]);
         $row = $stmt->fetch();
-        return $row ? new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture']) : null;
+        return $row ? new User($row['id'], $row['name'], $row['username'], $row['type'], $row['profile_picture'], isset($row['plan_id']) ? (int)$row['plan_id'] : null) : null;
     }
 
     static function getAll(PDO $db): array {
-        $rows = $db->query('SELECT id, name, username, type, profile_picture FROM users ORDER BY type, name')->fetchAll();
-        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type'], $r['profile_picture']), $rows);
+        $rows = $db->query('SELECT id, name, username, type, profile_picture, plan_id FROM users ORDER BY type, name')->fetchAll();
+        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type'], $r['profile_picture'], isset($r['plan_id']) ? (int)$r['plan_id'] : null), $rows);
     }
 
     static function getByType(PDO $db, string $type): array {
-        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture FROM users WHERE type = ? ORDER BY name');
+        $stmt = $db->prepare('SELECT id, name, username, type, profile_picture, plan_id FROM users WHERE type = ? ORDER BY name');
         $stmt->execute([$type]);
-        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type'], $r['profile_picture']), $stmt->fetchAll());
+        return array_map(fn($r) => new User($r['id'], $r['name'], $r['username'], $r['type'], $r['profile_picture'], isset($r['plan_id']) ? (int)$r['plan_id'] : null), $stmt->fetchAll());
     }
 
     function setType(PDO $db, string $type): void {
@@ -79,7 +82,7 @@ class User {
     static function createWithType(PDO $db, string $name, string $username, string $password, string $type): bool {
         try {
             $stmt = $db->prepare('INSERT INTO users (name, username, password, type) VALUES (?, ?, ?, ?)');
-            $stmt->execute([$name, $username, sha1($password), $type]);
+            $stmt->execute([$name, $username, password_hash($password, PASSWORD_DEFAULT), $type]);
             return true;
         } catch (PDOException $e) {
             return false;

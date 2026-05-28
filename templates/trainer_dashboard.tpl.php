@@ -7,7 +7,7 @@ function calTimeToRow(string $time): int {
 }
 ?>
 
-<?php function drawTrainerDashboard(Trainer $trainer, array $classes, array $rosters) {
+<?php function drawTrainerDashboard(Trainer $trainer, array $classes, array $rosters, Session $session) {
     $dayToCol = [
         'Monday' => 2, 'Tuesday' => 3, 'Wednesday' => 4,
         'Thursday' => 5, 'Friday' => 6, 'Saturday' => 7, 'Sunday' => 8
@@ -110,6 +110,7 @@ function calTimeToRow(string $time): int {
 
       <h3 class="modal-section-title">Reschedule</h3>
       <form action="/actions/action_reschedule_class.php" method="post" class="modal-reschedule-form">
+        <?= $session->csrfField() ?>
         <input type="hidden" name="class_id" id="modal-class-id">
         <div class="form-group">
           <label for="modal-reschedule-day">Day</label>

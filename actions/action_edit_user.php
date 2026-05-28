@@ -7,6 +7,11 @@ $session = new Session();
 if (!$session->isLoggedIn() || $session->getType() !== 'admin')
     die(header('Location: /pages/login.php'));
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: /pages/admin_users.php'); exit;
+}
+
 require_once(__DIR__ . '/../database/connection.db.php');
 require_once(__DIR__ . '/../database/user.class.php');
 
@@ -38,7 +43,7 @@ $user->username = $username;
 $user->save($db);
 
 if ($password !== '') {
-    $db->prepare('UPDATE users SET password = ? WHERE id = ?')->execute([sha1($password), $id]);
+    $db->prepare('UPDATE users SET password = ? WHERE id = ?')->execute([password_hash($password, PASSWORD_DEFAULT), $id]);
 }
 
 $session->addMessage('success', 'User updated');

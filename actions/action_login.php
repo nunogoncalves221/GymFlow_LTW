@@ -4,6 +4,11 @@ declare(strict_types=1);
 require_once(__DIR__ . '/../utils/session.php');
 $session = new Session();
 
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: /pages/login.php'); exit;
+}
+
 require_once(__DIR__ . '/../database/connection.db.php');
 require_once(__DIR__ . '/../database/user.class.php');
 
@@ -11,7 +16,10 @@ $db = getDatabaseConnection();
 
 $user = User::getUserWithPassword($db, $_POST['username'], $_POST['password']);
 
-if ($user) {
+if ($user && $user->type === 'deactivated') {
+    $session->addMessage('error', 'Your account has been deactivated.');
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+} elseif ($user) {
     $session->setId($user->id);
     $session->setName($user->name);
     $session->setType($user->type);

@@ -19,22 +19,26 @@ $action = $_GET['action'] ?? '';
 drawHeader($session, 'Equipment — Admin');
 drawAdminNav('equipment');
 
-if ($action === 'create') {
-    drawEquipmentForm(null);
+if (($_POST['action'] ?? '') === 'delete') {
+    if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $session->addMessage('error', 'Invalid request.');
+        header('Location: ../pages/admin_equipment.php'); exit;
+    }
+    Equipment::delete($db, (int)($_POST['id'] ?? 0));
+    $session->addMessage('success', 'Equipment deleted');
+    header('Location: ../pages/admin_equipment.php'); exit;
+} elseif ($action === 'create') {
+    drawEquipmentForm(null, $session);
 } elseif ($action === 'edit' && isset($_GET['id'])) {
     $item = Equipment::getById($db, (int)$_GET['id']);
-    if ($item) drawEquipmentForm($item);
+    if ($item) drawEquipmentForm($item, $session);
     else {
         $session->addMessage('error', 'Equipment not found');
         header('Location: ../pages/admin_equipment.php');
     }
-} elseif ($action === 'delete' && isset($_GET['id'])) {
-    Equipment::delete($db, (int)$_GET['id']);
-    $session->addMessage('success', 'Equipment deleted');
-    header('Location: ../pages/admin_equipment.php');
 } else {
     $equipment = Equipment::getAll($db);
-    drawEquipmentList($equipment);
+    drawEquipmentList($equipment, $session);
 }
 
 drawFooter();

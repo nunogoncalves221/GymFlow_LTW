@@ -18,10 +18,75 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 </div>
 <?php } ?>
 
+<?php function drawEquipmentBanner(array $equipment, Session $session): void {
+    if (!$session->isLoggedIn()) return;
+
+    $avail_units = array_sum(array_map(fn($e) => $e->quantity - $e->in_use, array_filter($equipment, fn($e) => $e->isAvailable())));
+    $total_units = array_sum(array_map(fn($e) => $e->quantity, $equipment));
+    $types_avail = array_filter($equipment, fn($e) => $e->isAvailable());
+
+    // group by type for the mini summary
+    $by_type = [];
+    foreach ($types_avail as $e) {
+        $by_type[$e->type] = ($by_type[$e->type] ?? 0) + ($e->quantity - $e->in_use);
+    }
+?>
+<a href="/pages/equipment.php" class="equip-banner">
+  <div class="equip-banner-left">
+    <div class="equip-banner-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/><path d="M4 8h2v8H4zM18 8h2v8h-2z"/><path d="M2 10h2v4H2zM20 10h2v4h-2z"/></svg>
+    </div>
+    <div class="equip-banner-text">
+      <span class="equip-banner-title">Training Area</span>
+      <span class="equip-banner-sub">
+        <?php if ($avail_units > 0): ?>
+          <?= $avail_units ?> of <?= $total_units ?> units available now
+        <?php else: ?>
+          Check equipment availability
+        <?php endif; ?>
+      </span>
+    </div>
+  </div>
+  <div class="equip-banner-types">
+    <?php foreach (array_slice($by_type, 0, 3, true) as $type => $count): ?>
+      <span class="equip-banner-tag">
+        <span class="equip-banner-tag-dot"></span>
+        <?= h($type) ?> <strong><?= $count ?></strong>
+      </span>
+    <?php endforeach; ?>
+    <?php if (count($by_type) > 3): ?>
+      <span class="equip-banner-more">+<?= count($by_type) - 3 ?> more</span>
+    <?php endif; ?>
+  </div>
+  <div class="equip-banner-arrow">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </div>
+</a>
+<?php } ?>
+
+<?php function drawTrainersBanner(Session $session): void {
+    if (!$session->isLoggedIn()) return;
+?>
+<a href="/pages/trainers.php" class="trainers-cta-banner">
+  <div class="trainers-cta-left">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <div class="trainers-cta-text">
+      <span class="trainers-cta-title">Our Trainers</span>
+      <span class="trainers-cta-sub">Meet the experts behind every class</span>
+    </div>
+  </div>
+  <span class="trainers-cta-btn">View profiles &rarr;</span>
+</a>
+<?php } ?>
+
 <?php function drawClassList(array $classes, array $types, array $trainers, string $filter_type, string $filter_day, string $filter_trainer, string $filter_time) { ?>
   <?php $hasFilter = $filter_type || $filter_day || $filter_trainer || $filter_time; ?>
 
   <div class="search-filters">
+    <div class="filter-search-row">
+      <svg class="filter-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="class-search" class="filter-search-input" placeholder="Search classes, trainers…" autocomplete="off">
+    </div>
     <div class="filter-inline">
 
       <div class="filter-group-inline">
@@ -63,18 +128,11 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
       <?php endif; ?>
 
     </div>
-    <?php if ($hasFilter): ?>
-    <p class="filter-results-count"><?= count($classes) ?> class<?= count($classes) !== 1 ? 'es' : '' ?> found</p>
-    <?php endif; ?>
+    <p class="filter-results-count" id="filter-results-count"
+       <?= $hasFilter ? '' : 'style="display:none"' ?>>
+      <?= count($classes) ?> class<?= count($classes) !== 1 ? 'es' : '' ?> found
+    </p>
   </div>
-
-  <script>
-  function applySelectFilter(param, value) {
-    var url = new URL(window.location.href);
-    if (value) url.searchParams.set(param, value); else url.searchParams.delete(param);
-    window.location.href = url.toString();
-  }
-  </script>
 
   <section class="classes-grid">
     <?php if (empty($classes)): ?>
@@ -143,6 +201,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 
       <?php elseif ($session->getType() === 'member' && $is_enrolled): ?>
         <form method="POST" action="/actions/action_cancel_enrollment.php">
+          <?= $session->csrfField() ?>
           <input type="hidden" name="class_id" value="<?= $class->id ?>">
           <button type="submit" class="btn-book btn-cancel">Cancel enrollment</button>
         </form>
@@ -152,6 +211,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 
       <?php elseif ($session->getType() === 'member'): ?>
         <form method="POST" action="/actions/action_enroll.php">
+          <?= $session->csrfField() ?>
           <input type="hidden" name="class_id" value="<?= $class->id ?>">
           <button type="submit" class="btn-book">Book a spot</button>
         </form>
@@ -170,6 +230,7 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
           <?= h($class->name) ?> · <?= h($class->day_of_week) ?> · <?= h($class->time) ?>
         </p>
         <form method="POST" action="/actions/action_submit_review.php" class="review-form">
+          <?= $session->csrfField() ?>
           <input type="hidden" name="class_id" value="<?= $class->id ?>">
           <div class="star-picker" id="star-picker">
             <?php for ($i = 5; $i >= 1; $i--): ?>

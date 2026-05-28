@@ -24,5 +24,5 @@ foreach ($classes as $class) {
 }
 
 drawHeader($session, 'GymFlow — My Dashboard');
-drawTrainerDashboard($trainer, $classes, $rosters);
+drawTrainerDashboard($trainer, $classes, $rosters, $session);
 drawFooter();

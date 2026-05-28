@@ -36,19 +36,18 @@ CREATE TABLE IF NOT EXISTS reviews (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     class_id    INTEGER NOT NULL REFERENCES classes(id),
     user_id     INTEGER NOT NULL DEFAULT 0 REFERENCES users(id),
-    author_name TEXT    NOT NULL,
     rating      INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
     comment     TEXT    NOT NULL DEFAULT '',
-    created_at  TEXT    NOT NULL DEFAULT ''
+    created_at  TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 );
 
 CREATE TABLE IF NOT EXISTS equipment (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    name         TEXT    NOT NULL,
-    type         TEXT    NOT NULL DEFAULT '',
-    quantity     INTEGER NOT NULL DEFAULT 1,
-    available    INTEGER NOT NULL DEFAULT 1 CHECK(available BETWEEN 0 AND 1)
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    name     TEXT    NOT NULL,
+    type     TEXT    NOT NULL DEFAULT '',
+    quantity INTEGER NOT NULL DEFAULT 1,
+    in_use   INTEGER NOT NULL DEFAULT 0
 );
 
 -- Enrollments
@@ -60,26 +59,61 @@ CREATE TABLE IF NOT EXISTS enrollments (
     UNIQUE(user_id, class_id)
 );
 
-INSERT INTO equipment (id, name, type, quantity, available) VALUES
-(1, 'Treadmill',      'Cardio',    8, 1),
-(2, 'Stationary Bike','Cardio',    6, 1),
-(3, 'Rowing Machine', 'Cardio',    4, 1),
-(4, 'Barbell Set',    'Weights',  10, 1),
-(5, 'Dumbbell Rack',  'Weights',   5, 1),
-(6, 'Weight Bench',   'Weights',   8, 1),
-(7, 'Pull-up Bar',    'Functional',4, 1),
-(8, 'Kettlebells',    'Functional',12, 1);
+-- Membership Plans
+CREATE TABLE IF NOT EXISTS membership_plans (
+    id                       INTEGER PRIMARY KEY AUTOINCREMENT,
+    name                     TEXT    NOT NULL,
+    price                    REAL    NOT NULL DEFAULT 0,
+    description              TEXT    NOT NULL DEFAULT '',
+    max_enrollments_per_week INTEGER,          -- NULL = unlimited
+    access_level             INTEGER NOT NULL DEFAULT 1,
+    is_active                INTEGER NOT NULL DEFAULT 1
+);
 
+CREATE TABLE IF NOT EXISTS membership_plan_features (
+    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    plan_id INTEGER NOT NULL REFERENCES membership_plans(id) ON DELETE CASCADE,
+    feature TEXT    NOT NULL
+);
+
+-- plan_id on users (NULL = no plan assigned)
+ALTER TABLE users ADD COLUMN plan_id INTEGER REFERENCES membership_plans(id);
+
+-- Membership change requests
+CREATE TABLE IF NOT EXISTS membership_requests (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    plan_id    INTEGER NOT NULL REFERENCES membership_plans(id) ON DELETE CASCADE,
+    status     TEXT    NOT NULL DEFAULT 'pending'
+                       CHECK(status IN ('pending', 'approved', 'rejected')),
+    created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Disputes & Feedback
+CREATE TABLE IF NOT EXISTS disputes (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id        INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    category       TEXT    NOT NULL CHECK(category IN ('equipment_malfunction', 'class_cancellation', 'billing', 'staff_conduct', 'other')),
+    description    TEXT    NOT NULL,
+    status         TEXT    NOT NULL DEFAULT 'open' CHECK(status IN ('open', 'in_review', 'resolved')),
+    admin_response TEXT,
+    created_at     TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    responded_at   TEXT
+);
 
 INSERT INTO users (id, name, username, password, type) VALUES
-(0, 'Guest',        'guest',   '',                                          'member'),
-(1, 'Admin',        'admin',   '05d467af7608358ce68eb3423f4849fd56034105', 'admin'),
-(2, 'Member',       'member',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'member'),
-(3, 'Ana Silva',    'ana',     '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(4, 'Carlos Mota',  'carlos',  '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(5, 'Marta Lima',   'marta',   '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(6, 'João Pires',   'joao',    '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer'),
-(7, 'Rita Costa',   'rita',    '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'trainer');
+(1, 'Admin',           'admin',   '$2y$10$YiGX7nmnZBTAx0oKm7Bcg.b.FjaSU0O7qZA/uvF8VCKA/FNI.uk0S', 'admin'),
+(2, 'Member',          'member',  '$2y$10$sJLmymNsI.hUjzCkeEsk/Os9H3iKqg/nuefPdKvpPVBrj/cua4gSO', 'member'),
+(3, 'Ana Silva',       'ana',     '$2y$10$W3tzUEUSrbm2.s4.78dKdOqw.WcyFlmOpxVUx/449Av/51.yLaGKG', 'trainer'),
+(4, 'Carlos Mota',     'carlos',  '$2y$10$v.dUaXE2XMuV/bMBGzxwPOP9Xz1RAs.5GL1LBduzX3L/7Fw3oCoje', 'trainer'),
+(5, 'Marta Lima',      'marta',   '$2y$10$9UZW2joJ0p8j6q9zWAohEODyB342yrCYxxNO9JDMFM98KpXq54/42', 'trainer'),
+(6, 'João Pires',      'joao',    '$2y$10$uUNef1H0.g/QY9McyeM9eu7Lt5XgZ.ZQPUzmvWb.WRy10OnsotjAy', 'trainer'),
+(7, 'Rita Costa',      'rita',    '$2y$10$dL3FIuZ3zj4RqcQzSgHaU.D0GFJC95STGxuAbhi9CIfmLQ1ZDiKSi', 'trainer'),
+(8, 'Sofia Rodrigues', 'sofia',   '$2y$10$km9lyo8wbGlC5cyKnSdhDeTNcriPCXYu0B9sQAKEpqMnw495GrhkO', 'member'),
+(9, 'Miguel Ferreira', 'miguel',  '$2y$10$x2wFhhUF/zjGZhWvx.ZoVetILdqo2EDHCuejUUx9sC/3pUpYm1nzS', 'member'),
+(10,'Inês Marques',    'ines',    '$2y$10$0bvCm/v9C/zqsWQBmDtAa.6DDadUJhvYdc8/G1a5ab35gQjh7U2/e', 'member'),
+(11,'Beatriz Santos',  'beatriz', '$2y$10$30vWYynxk8v/Hext3q03IuFa3T3ZR0TAOHVgMoMc2YioVS1RTivri', 'member'),
+(12,'Rui Oliveira',    'rui',     '$2y$10$ndNHuZC.EYka6BhcmvNXCOxlkfNRpXajuJ8hgiGk0f7mP6C5EiUnq', 'member');
 
 -- Trainers
 INSERT INTO trainers (id, name, bio, specializations, certifications, user_id) VALUES
@@ -114,10 +148,41 @@ INSERT INTO classes (id, name, type, description, duration_min, capacity, traine
 (21, 'Guided Meditation',  'Meditation', 'A calming session focused on breathwork, mindfulness and mental clarity. Perfect for stress reduction and recovery.',     40, 20,  3, '/docs/images/guided_meditation.jpg',  'Sunday',    '09:00');
 
 -- Reviews
-INSERT INTO reviews (id, class_id, user_id, author_name, rating, comment) VALUES
-(1,  4, 0, 'Sofia Rodrigues', 5, 'Amazing class! Carlos is very motivating and the intensity is just right.'),
-(2,  4, 0, 'Miguel Ferreira', 4, 'Great class, very complete. Could use more exercise variety but I highly recommend it.'),
-(3,  4, 0, 'Inês Marques',    5, 'I''ve been coming for 3 months and the results are obvious. Great group energy.'),
-(4,  1, 0, 'Sofia Rodrigues', 5, 'Ana is incredible. The class leaves me feeling refreshed and centered every single time.'),
-(5,  7, 0, 'Beatriz Santos',  5, 'Marta is an exceptional instructor. My back pain has improved significantly.'),
-(6, 11, 0, 'Rui Oliveira',    4, 'Intense and fun. João really knows how to keep the energy up throughout the session.');
+INSERT INTO reviews (id, class_id, user_id, rating, comment) VALUES
+(1,  4,  8, 5, 'Amazing class! Carlos is very motivating and the intensity is just right.'),
+(2,  4,  9, 4, 'Great class, very complete. Could use more exercise variety but I highly recommend it.'),
+(3,  4, 10, 5, 'I''ve been coming for 3 months and the results are obvious. Great group energy.'),
+(4,  1,  8, 5, 'Ana is incredible. The class leaves me feeling refreshed and centered every single time.'),
+(5,  7, 11, 5, 'Marta is an exceptional instructor. My back pain has improved significantly.'),
+(6, 11, 12, 4, 'Intense and fun. João really knows how to keep the energy up throughout the session.');
+
+INSERT INTO equipment (id, name, type, quantity, in_use) VALUES
+(1, 'Treadmill',      'Cardio',    8, 3),
+(2, 'Stationary Bike','Cardio',    6, 0),
+(3, 'Rowing Machine', 'Cardio',    4, 4),
+(4, 'Barbell Set',    'Weights',  10, 2),
+(5, 'Dumbbell Rack',  'Weights',   5, 0),
+(6, 'Weight Bench',   'Weights',   8, 5),
+(7, 'Pull-up Bar',    'Functional',4, 0),
+(8, 'Kettlebells',    'Functional',12, 7);
+
+-- Seed plans
+INSERT INTO membership_plans (id, name, price, description, max_enrollments_per_week, access_level) VALUES
+(1, 'Basic',   9.99,  'Perfect to get started. Access to selected classes with a weekly limit.', 2, 1),
+(2, 'Standard', 19.99, 'Great for regular gym-goers. More classes, more flexibility.', 5, 2),
+(3, 'Premium', 29.99, 'Unlimited access to all classes and priority enrollment.', NULL, 3);
+
+INSERT INTO membership_plan_features (plan_id, feature) VALUES
+(1, '2 classes per week'),
+(1, 'Access to Yoga and Meditation classes'),
+(1, 'Locker room access'),
+(2, '5 classes per week'),
+(2, 'Access to all class types'),
+(2, 'Locker room access'),
+(2, 'Guest pass once a month'),
+(3, 'Unlimited classes'),
+(3, 'Access to all class types'),
+(3, 'Priority enrollment'),
+(3, 'Locker room access'),
+(3, 'Guest pass twice a month'),
+(3, 'Personal trainer consultation');

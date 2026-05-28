@@ -6,26 +6,35 @@ $session = new Session();
 
 if (!$session->isLoggedIn()) {
     $session->addMessage('error', 'You must be logged in to enroll in a class.');
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
-    exit;
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/pages/index.php')); exit;
+}
+
+if (!$session->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    $session->addMessage('error', 'Invalid request.');
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/pages/index.php')); exit;
 }
 
 require_once(__DIR__ . '/../database/connection.db.php');
 require_once(__DIR__ . '/../database/user.class.php');
 require_once(__DIR__ . '/../database/fitnessclass.class.php');
+require_once(__DIR__ . '/../database/membership_plan.class.php');
 
 $db   = getDatabaseConnection();
 $user = User::getUser($db, $session->getId());
 
 if ($user->type !== 'member') {
     $session->addMessage('error', 'Only members can enroll in classes.');
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
-    exit;
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/pages/index.php')); exit;
+}
+
+[$allowed, $reason] = MembershipPlan::canEnroll($db, $user->id, $user->plan_id);
+if (!$allowed) {
+    $session->addMessage('error', $reason);
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/pages/index.php')); exit;
 }
 
 $class_id = (int)($_POST['class_id'] ?? 0);
-
-$result = FitnessClass::enroll($db, $session->getId(), $class_id);
+$result   = FitnessClass::enroll($db, $session->getId(), $class_id);
 [$type, $text] = explode(':', $result, 2);
 
 $session->addMessage($type, $text);

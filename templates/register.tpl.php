@@ -2,11 +2,12 @@
 declare(strict_types=1);
 ?>
 
-<?php function drawRegisterForm() { ?>
+<?php function drawRegisterForm(Session $session) { ?>
   <section class="auth-page">
     <article class="auth-card">
       <h2>Register</h2>
       <form action="../actions/action_register.php" method="post">
+        <?= $session->csrfField() ?>
         <div class="form-group">
           <label for="name">Full name</label>
           <input type="text" id="name" name="name" required />

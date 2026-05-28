@@ -11,5 +11,5 @@ require_once('../templates/common.tpl.php');
 require_once('../templates/register.tpl.php');
 
 drawHeader($session, 'GymFlow — Register');
-drawRegisterForm();
+drawRegisterForm($session);
 drawFooter();

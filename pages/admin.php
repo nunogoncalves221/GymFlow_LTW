@@ -12,6 +12,7 @@ require_once(__DIR__ . '/../database/user.class.php');
 require_once(__DIR__ . '/../database/trainer.class.php');
 require_once(__DIR__ . '/../database/fitnessclass.class.php');
 require_once(__DIR__ . '/../database/equipment.class.php');
+require_once(__DIR__ . '/../database/dispute.class.php');
 
 require_once(__DIR__ . '/../templates/common.tpl.php');
 require_once(__DIR__ . '/../templates/admin.tpl.php');
@@ -23,6 +24,7 @@ $stats = [
     'trainers'  => count(Trainer::getTrainers($db)),
     'classes'   => count(FitnessClass::getClasses($db)),
     'equipment' => count(Equipment::getAll($db)),
+    'open_disputes' => Dispute::countByStatus($db, 'open'),
 ];
 
 drawHeader($session, 'Admin — GymFlow');
