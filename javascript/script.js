@@ -6,12 +6,98 @@ function applySelectFilter(param, value) {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Staggered card entrance animation
+    // ── Flash message auto-dismiss ─────────────────────────────────────────
+    document.querySelectorAll('.flash').forEach(function (flash) {
+        var timer = setTimeout(function () { dismissFlash(flash); }, 4000);
+        flash.style.cursor = 'pointer';
+        flash.title = 'Click to dismiss';
+        flash.addEventListener('click', function () {
+            clearTimeout(timer);
+            dismissFlash(flash);
+        });
+    });
+
+    function dismissFlash(el) {
+        el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        el.style.opacity    = '0';
+        el.style.transform  = 'translateY(-6px)';
+        setTimeout(function () {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        }, 420);
+    }
+
+    // ── Report form: character counter + submit confirmation ───────────────
+    var reportTextarea = document.querySelector('.disputes-page .dispute-textarea');
+    if (reportTextarea) {
+        var counter = document.createElement('span');
+        counter.className = 'dispute-char-counter';
+        counter.setAttribute('aria-live', 'polite');
+        reportTextarea.parentNode.appendChild(counter);
+
+        function updateCounter() {
+            var len = reportTextarea.value.length;
+            var min = 10;
+            counter.textContent = len < min
+                ? (min - len) + ' more character' + (min - len !== 1 ? 's' : '') + ' required'
+                : len + ' character' + (len !== 1 ? 's' : '');
+            counter.classList.toggle('dispute-char-counter--ok',  len >= min);
+            counter.classList.toggle('dispute-char-counter--bad', len > 0 && len < min);
+        }
+        reportTextarea.addEventListener('input', updateCounter);
+        updateCounter();
+
+        var reportForm = reportTextarea.closest('form');
+        if (reportForm) {
+            reportForm.addEventListener('submit', function (e) {
+                var category = reportForm.querySelector('select[name="category"]');
+                var catLabel = category && category.options[category.selectedIndex]
+                    ? category.options[category.selectedIndex].text
+                    : 'Unknown';
+                if (!confirm('Submit a report under "' + catLabel + '"?\n\nAn admin will review it shortly.')) {
+                    e.preventDefault();
+                }
+            });
+        }
+    }
+
+    // ── Password confirmation validator ────────────────────────────────────
+    var newPw     = document.getElementById('newPw');
+    var confirmPw = document.getElementById('confirmPw');
+
+    if (newPw && confirmPw) {
+        var pwMsg = document.createElement('span');
+        pwMsg.className = 'pw-match-msg';
+        confirmPw.parentNode.appendChild(pwMsg);
+
+        function checkPasswords() {
+            var a = newPw.value;
+            var b = confirmPw.value;
+            if (!b) {
+                pwMsg.textContent = '';
+                confirmPw.setCustomValidity('');
+                return;
+            }
+            if (a === b) {
+                pwMsg.textContent = '✓ Passwords match';
+                pwMsg.className   = 'pw-match-msg pw-match-msg--ok';
+                confirmPw.setCustomValidity('');
+            } else {
+                pwMsg.textContent = '✗ Passwords do not match';
+                pwMsg.className   = 'pw-match-msg pw-match-msg--bad';
+                confirmPw.setCustomValidity('Passwords do not match');
+            }
+        }
+
+        newPw.addEventListener('input', checkPasswords);
+        confirmPw.addEventListener('input', checkPasswords);
+    }
+
+    // ── Staggered card entrance animation ─────────────────────────────────
     document.querySelectorAll('.class-card').forEach(function (card, i) {
         card.style.animationDelay = (i * 0.045) + 's';
     });
 
-    // Live search — filters class cards client-side without a page reload
+    // ── Live search — filters class cards client-side ──────────────────────
     var searchInput  = document.getElementById('class-search');
     var resultsCount = document.getElementById('filter-results-count');
     var cards        = Array.from(document.querySelectorAll('.class-card'));
@@ -67,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return d.innerHTML;
     }
 
-    // Trainer dashboard calendar modal
+    // ── Trainer dashboard calendar modal ──────────────────────────────────
     const modal = document.getElementById('class-modal');
     if (modal) {
         document.querySelectorAll('.cal-class-card').forEach(function (card) {
@@ -110,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Profile picture preview
+    // ── Profile picture preview ────────────────────────────────────────────
     const editBtn  = document.getElementById('avatar-edit-btn');
     const editMenu = document.getElementById('avatar-edit-menu');
     const fileInput = document.getElementById('profile_picture');
@@ -137,4 +223,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-});
+}); 

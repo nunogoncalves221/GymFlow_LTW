@@ -3097,4 +3097,26 @@ a.btn-book {
     white-space: pre-wrap;
     word-break: break-word;
     margin-bottom: 0;
-} 
+}
+
+/* Character counter — report form */
+.dispute-char-counter {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+.dispute-char-counter--ok  { color: var(--accent); }
+.dispute-char-counter--bad { color: #e05c5c; }
+
+/* Password match message — profile */
+.pw-match-msg {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    min-height: 1.1em;
+    transition: color 0.2s;
+}
+.pw-match-msg--ok  { color: var(--accent); }
+.pw-match-msg--bad { color: #e05c5c; }
