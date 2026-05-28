@@ -124,6 +124,14 @@ require_once(__DIR__ . '/../database/membership_plan.class.php');
       <a href="/pages/membership.php" class="btn-save" style="display:inline-block;text-decoration:none;">View all plans</a>
     </article>
 
+    <?php if ($user->type === 'member'): ?>
+      <article class="profile-form-card">
+        <h3 class="profile-section-title">Reports &amp; Feedback</h3>
+        <p class="profile-logout-info">Report issues such as equipment malfunctions or class cancellations.</p>
+        <a href="/pages/disputes.php" class="btn-save" style="display:inline-block;text-decoration:none;">My Reports</a>
+      </article>
+    <?php endif; ?>
+
     <article class="profile-form-card">
       <p style="color: var(--text-muted); margin-bottom: 1rem;">You are logged in as <strong><?= h($user->username) ?></strong>.</p>
       <form action="/pages/profile.php" method="post">

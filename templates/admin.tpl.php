@@ -14,6 +14,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
   <a href="../pages/admin_classes.php"      class="<?= $active === 'classes'     ? 'active' : '' ?>">Classes</a>
   <a href="../pages/admin_equipment.php"    class="<?= $active === 'equipment'   ? 'active' : '' ?>">Equipment</a>
   <a href="../pages/admin_memberships.php"  class="<?= $active === 'memberships' ? 'active' : '' ?>">Memberships</a>
+  <a href="../pages/admin_disputes.php" class="<?= $active === 'disputes' ? 'active' : '' ?>">Reports</a>
 </nav>
 <?php } ?>
 
@@ -37,12 +38,17 @@ require_once(__DIR__ . '/../database/equipment.class.php');
       <span class="stat-number"><?= h((string)$stats['equipment']) ?></span>
       <span class="stat-label">Equipment</span>
     </div>
+    <div class="stat-card">
+      <span class="stat-number"><?= h((string)($stats['open_disputes'] ?? 0)) ?></span>
+      <span class="stat-label">Open Reports</span>
+    </div>
   </div>
   <div class="admin-quick-links">
     <a href="../pages/admin_users.php?action=create_member" class="btn">Add Member</a>
     <a href="../pages/admin_users.php?action=create_trainer" class="btn">Add Trainer</a>
     <a href="../pages/admin_classes.php?action=create" class="btn">Add Class</a>
     <a href="../pages/admin_equipment.php?action=create" class="btn">Add Equipment</a>
+    <a href="../pages/admin_disputes.php" class="btn">View Reports</a>
   </div>
 </section>
 <?php } ?>
@@ -317,4 +323,4 @@ require_once(__DIR__ . '/../database/equipment.class.php');
     </div>
   </form>
 </section>
-<?php } ?>
+<?php } ?> 

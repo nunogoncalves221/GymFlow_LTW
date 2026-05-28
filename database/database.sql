@@ -89,6 +89,18 @@ CREATE TABLE IF NOT EXISTS membership_requests (
     created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Disputes & Feedback
+CREATE TABLE IF NOT EXISTS disputes (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id        INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    category       TEXT    NOT NULL CHECK(category IN ('equipment_malfunction', 'class_cancellation', 'billing', 'staff_conduct', 'other')),
+    description    TEXT    NOT NULL,
+    status         TEXT    NOT NULL DEFAULT 'open' CHECK(status IN ('open', 'in_review', 'resolved')),
+    admin_response TEXT,
+    created_at     TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    responded_at   TEXT
+);
+
 INSERT INTO users (id, name, username, password, type) VALUES
 (1, 'Admin',           'admin',   '$2y$10$YiGX7nmnZBTAx0oKm7Bcg.b.FjaSU0O7qZA/uvF8VCKA/FNI.uk0S', 'admin'),
 (2, 'Member',          'member',  '$2y$10$sJLmymNsI.hUjzCkeEsk/Os9H3iKqg/nuefPdKvpPVBrj/cua4gSO', 'member'),

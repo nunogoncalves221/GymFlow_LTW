@@ -42,7 +42,7 @@
 **Extra:**
 - [ ] Personal Training Bookings
 - [x] Membership Plans
-- [] Disputes and Feedback
+- [x] Disputes and Feedback
 - [ ] Nutrition Plans
 
 ## Running
