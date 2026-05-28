@@ -342,6 +342,11 @@ a.btn-book {
     gap: 1.5rem;
 }
 
+@keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .class-card {
     display: flex;
     flex-direction: column;
@@ -349,6 +354,7 @@ a.btn-book {
     overflow: hidden;
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     position: relative;
+    animation: cardFadeIn 0.35s ease both;
 }
 
 .class-card:hover {
@@ -1290,6 +1296,50 @@ a.btn-book {
     font-style: italic;
     padding-left: 0.1rem;
 }
+
+.filter-search-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 0.15rem;
+}
+
+.filter-search-icon {
+    color: var(--text-dim);
+    flex-shrink: 0;
+}
+
+.filter-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text);
+    padding: 0.2rem 0;
+}
+
+.filter-search-input::placeholder {
+    color: var(--text-dim);
+}
+
+.filter-search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E") center/contain no-repeat;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.filter-search-input::-webkit-search-cancel-button:hover {
+    opacity: 1;
+}
+
 /* ─── TRAINER DASHBOARD ──────────────────────────────────────── */
 .dashboard-header {
     margin-bottom: 1.5rem;

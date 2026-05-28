@@ -1,4 +1,71 @@
+function applySelectFilter(param, value) {
+    var url = new URL(window.location.href);
+    if (value) url.searchParams.set(param, value); else url.searchParams.delete(param);
+    window.location.href = url.toString();
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+
+    // Staggered card entrance animation
+    document.querySelectorAll('.class-card').forEach(function (card, i) {
+        card.style.animationDelay = (i * 0.045) + 's';
+    });
+
+    // Live search — filters class cards client-side without a page reload
+    var searchInput  = document.getElementById('class-search');
+    var resultsCount = document.getElementById('filter-results-count');
+    var cards        = Array.from(document.querySelectorAll('.class-card'));
+    var grid         = document.querySelector('.classes-grid');
+
+    if (searchInput && cards.length) {
+        var phpCount  = resultsCount ? resultsCount.textContent.trim() : null;
+        var searchMsg = null;
+
+        searchInput.addEventListener('input', function () {
+            var q = this.value.trim().toLowerCase();
+            var visible = 0;
+
+            cards.forEach(function (card) {
+                var matches = !q || card.textContent.toLowerCase().includes(q);
+                card.style.display = matches ? '' : 'none';
+                if (matches) visible++;
+            });
+
+            if (resultsCount) {
+                if (q) {
+                    resultsCount.textContent = visible + ' class' + (visible !== 1 ? 'es' : '') + ' found';
+                    resultsCount.style.display = '';
+                } else {
+                    resultsCount.textContent = phpCount || '';
+                    resultsCount.style.display = phpCount ? '' : 'none';
+                }
+            }
+
+            if (!searchMsg) {
+                searchMsg = document.createElement('p');
+                searchMsg.className = 'no-results';
+                searchMsg.style.display = 'none';
+                grid.prepend(searchMsg);
+            }
+            searchMsg.innerHTML = 'No classes match &ldquo;<strong>' + escapeHtml(q) + '</strong>&rdquo;. <a href="#" class="filter-clear-inline" id="clear-search-btn">Clear search</a>';
+            searchMsg.style.display = (visible === 0 && q) ? '' : 'none';
+
+            var clearBtn = document.getElementById('clear-search-btn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    searchInput.value = '';
+                    searchInput.dispatchEvent(new Event('input'));
+                });
+            }
+        });
+    }
+
+    function escapeHtml(str) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(str));
+        return d.innerHTML;
+    }
 
     // Trainer dashboard calendar modal
     const modal = document.getElementById('class-modal');

@@ -83,6 +83,10 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
   <?php $hasFilter = $filter_type || $filter_day || $filter_trainer || $filter_time; ?>
 
   <div class="search-filters">
+    <div class="filter-search-row">
+      <svg class="filter-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="class-search" class="filter-search-input" placeholder="Search classes, trainers…" autocomplete="off">
+    </div>
     <div class="filter-inline">
 
       <div class="filter-group-inline">
@@ -124,18 +128,11 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
       <?php endif; ?>
 
     </div>
-    <?php if ($hasFilter): ?>
-    <p class="filter-results-count"><?= count($classes) ?> class<?= count($classes) !== 1 ? 'es' : '' ?> found</p>
-    <?php endif; ?>
+    <p class="filter-results-count" id="filter-results-count"
+       <?= $hasFilter ? '' : 'style="display:none"' ?>>
+      <?= count($classes) ?> class<?= count($classes) !== 1 ? 'es' : '' ?> found
+    </p>
   </div>
-
-  <script>
-  function applySelectFilter(param, value) {
-    var url = new URL(window.location.href);
-    if (value) url.searchParams.set(param, value); else url.searchParams.delete(param);
-    window.location.href = url.toString();
-  }
-  </script>
 
   <section class="classes-grid">
     <?php if (empty($classes)): ?>
