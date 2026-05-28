@@ -59,6 +59,36 @@ CREATE TABLE IF NOT EXISTS enrollments (
     UNIQUE(user_id, class_id)
 );
 
+-- Membership Plans
+CREATE TABLE IF NOT EXISTS membership_plans (
+    id                       INTEGER PRIMARY KEY AUTOINCREMENT,
+    name                     TEXT    NOT NULL,
+    price                    REAL    NOT NULL DEFAULT 0,
+    description              TEXT    NOT NULL DEFAULT '',
+    max_enrollments_per_week INTEGER,          -- NULL = unlimited
+    access_level             INTEGER NOT NULL DEFAULT 1,
+    is_active                INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS membership_plan_features (
+    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    plan_id INTEGER NOT NULL REFERENCES membership_plans(id) ON DELETE CASCADE,
+    feature TEXT    NOT NULL
+);
+
+-- plan_id on users (NULL = no plan assigned)
+ALTER TABLE users ADD COLUMN plan_id INTEGER REFERENCES membership_plans(id);
+
+-- Membership change requests
+CREATE TABLE IF NOT EXISTS membership_requests (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    plan_id    INTEGER NOT NULL REFERENCES membership_plans(id) ON DELETE CASCADE,
+    status     TEXT    NOT NULL DEFAULT 'pending'
+                       CHECK(status IN ('pending', 'approved', 'rejected')),
+    created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 INSERT INTO users (id, name, username, password, type) VALUES
 (1, 'Admin',           'admin',   '$2y$10$YiGX7nmnZBTAx0oKm7Bcg.b.FjaSU0O7qZA/uvF8VCKA/FNI.uk0S', 'admin'),
 (2, 'Member',          'member',  '$2y$10$sJLmymNsI.hUjzCkeEsk/Os9H3iKqg/nuefPdKvpPVBrj/cua4gSO', 'member'),
@@ -123,3 +153,24 @@ INSERT INTO equipment (id, name, type, quantity, in_use) VALUES
 (6, 'Weight Bench',   'Weights',   8, 5),
 (7, 'Pull-up Bar',    'Functional',4, 0),
 (8, 'Kettlebells',    'Functional',12, 7);
+
+-- Seed plans
+INSERT INTO membership_plans (id, name, price, description, max_enrollments_per_week, access_level) VALUES
+(1, 'Basic',   9.99,  'Perfect to get started. Access to selected classes with a weekly limit.', 2, 1),
+(2, 'Standard', 19.99, 'Great for regular gym-goers. More classes, more flexibility.', 5, 2),
+(3, 'Premium', 29.99, 'Unlimited access to all classes and priority enrollment.', NULL, 3);
+
+INSERT INTO membership_plan_features (plan_id, feature) VALUES
+(1, '2 classes per week'),
+(1, 'Access to Yoga and Meditation classes'),
+(1, 'Locker room access'),
+(2, '5 classes per week'),
+(2, 'Access to all class types'),
+(2, 'Locker room access'),
+(2, 'Guest pass once a month'),
+(3, 'Unlimited classes'),
+(3, 'Access to all class types'),
+(3, 'Priority enrollment'),
+(3, 'Locker room access'),
+(3, 'Guest pass twice a month'),
+(3, 'Personal trainer consultation');

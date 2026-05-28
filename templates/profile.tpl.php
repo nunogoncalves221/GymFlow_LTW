@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
+require_once(__DIR__ . '/../database/membership_plan.class.php');
 ?>
 
-<?php function drawProfileForm(User $user, ?Trainer $trainer, Session $session) { ?>
+<?php function drawProfileForm(User $user, ?Trainer $trainer, Session $session, ?MembershipPlan $currentPlan = null) { ?>
   <section class="profile-page">
 
     <a href="/pages/index.php" class="back-link">← Back to classes</a>
@@ -109,7 +110,21 @@ declare(strict_types=1);
     <?php endif; ?>
 
     <article class="profile-form-card">
-      <h3>Logout</h3>
+      <h3>Membership Plan</h3>
+      <?php if ($currentPlan): ?>
+        <p style="margin-bottom:.5rem;">You are on the <strong><?= h($currentPlan->name) ?></strong> plan — €<?= number_format($currentPlan->price, 2) ?>/month.</p>
+        <ul style="list-style:none;padding:0;margin:0 0 1rem;color:var(--text-muted);font-size:.9rem;">
+          <?php foreach ($currentPlan->features as $f): ?>
+            <li>✓ <?= h($f) ?></li>
+          <?php endforeach; ?>
+        </ul>
+      <?php else: ?>
+        <p style="color:var(--text-muted);margin-bottom:1rem;">You don't have an active membership plan.</p>
+      <?php endif; ?>
+      <a href="/pages/membership.php" class="btn-save" style="display:inline-block;text-decoration:none;">View all plans</a>
+    </article>
+
+    <article class="profile-form-card">
       <p style="color: var(--text-muted); margin-bottom: 1rem;">You are logged in as <strong><?= h($user->username) ?></strong>.</p>
       <form action="/pages/profile.php" method="post">
         <?= $session->csrfField() ?>

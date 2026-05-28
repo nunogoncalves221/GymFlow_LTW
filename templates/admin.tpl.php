@@ -9,10 +9,11 @@ require_once(__DIR__ . '/../database/equipment.class.php');
 
 <?php function drawAdminNav(string $active = '') { ?>
 <nav class="admin-nav">
-  <a href="../pages/admin.php"           class="<?= $active === 'dashboard' ? 'active' : '' ?>">Dashboard</a>
-  <a href="../pages/admin_users.php"     class="<?= $active === 'users'     ? 'active' : '' ?>">Users</a>
-  <a href="../pages/admin_classes.php"   class="<?= $active === 'classes'   ? 'active' : '' ?>">Classes</a>
-  <a href="../pages/admin_equipment.php" class="<?= $active === 'equipment' ? 'active' : '' ?>">Equipment</a>
+  <a href="../pages/admin.php"              class="<?= $active === 'dashboard'   ? 'active' : '' ?>">Dashboard</a>
+  <a href="../pages/admin_users.php"        class="<?= $active === 'users'       ? 'active' : '' ?>">Users</a>
+  <a href="../pages/admin_classes.php"      class="<?= $active === 'classes'     ? 'active' : '' ?>">Classes</a>
+  <a href="../pages/admin_equipment.php"    class="<?= $active === 'equipment'   ? 'active' : '' ?>">Equipment</a>
+  <a href="../pages/admin_memberships.php"  class="<?= $active === 'memberships' ? 'active' : '' ?>">Memberships</a>
 </nav>
 <?php } ?>
 
