@@ -40,7 +40,10 @@
 - [ ] Oversee and ensure the smooth operation of the entire system.
 
 **Extra:**
-- [ ] Something extra (e.g., personal training bookings, membership plans, waitlist, ...).
+- [ ] Personal Training Bookings
+- [x] Membership Plans
+- [] Disputes and Feedback
+- [ ] Nutrition Plans
 
 ## Running
 
