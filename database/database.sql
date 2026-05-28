@@ -89,6 +89,26 @@ CREATE TABLE IF NOT EXISTS membership_requests (
     created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Nutrition Plans
+CREATE TABLE IF NOT EXISTS nutrition_plans (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    trainer_id  INTEGER NOT NULL REFERENCES trainers(id) ON DELETE CASCADE,
+    member_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title       TEXT    NOT NULL,
+    description TEXT    NOT NULL DEFAULT '',
+    calories    INTEGER,
+    created_at  TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS nutrition_meals (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    nutrition_plan_id INTEGER NOT NULL REFERENCES nutrition_plans(id) ON DELETE CASCADE,
+    name             TEXT    NOT NULL,
+    time_of_day      TEXT    NOT NULL DEFAULT '',
+    calories         INTEGER NOT NULL DEFAULT 0,
+    notes            TEXT    NOT NULL DEFAULT ''
+);
+
 -- Disputes & Feedback
 CREATE TABLE IF NOT EXISTS disputes (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
