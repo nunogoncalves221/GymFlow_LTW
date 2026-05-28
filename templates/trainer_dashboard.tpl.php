@@ -1,9 +1,36 @@
 <?php
 declare(strict_types=1);
 
-function calTimeToRow(string $time): int {
-    [$h, $m] = array_map('intval', explode(':', $time));
-    return ($h - 7) * 2 + intdiv($m, 30) + 2;
+function buildCalendarRows(array $classes): array {
+    $needed = [];
+    foreach ($classes as $c) {
+        [$h, $m] = array_map('intval', explode(':', $c->time));
+        $start = $h * 60 + $m;
+        for ($min = $start; $min < $start + $c->duration_min; $min += 30) $needed[$min] = true;
+    }
+    if (empty($needed)) {
+        for ($m = 7 * 60; $m < 22 * 60; $m += 30) $needed[$m] = true;
+    }
+    ksort($needed);
+
+    $rows = []; $timeToRow = []; $rowNum = 2; $prev = null;
+    foreach (array_keys($needed) as $min) {
+        if ($prev !== null && $min - $prev > 30) {
+            $fH = intdiv($prev + 30, 60); $fM = ($prev + 30) % 60;
+            $tH = intdiv($min, 60);       $tM = $min % 60;
+            $rows[] = ['type' => 'gap', 'row' => $rowNum++,
+                'label' => sprintf('%02d:%02d', $fH, $fM) . ' – ' . sprintf('%02d:%02d', $tH, $tM)];
+        }
+        $hh = intdiv($min, 60); $mm = $min % 60;
+        $t  = sprintf('%02d:%02d', $hh, $mm);
+        $rows[] = ['type' => 'slot', 'row' => $rowNum, 'min' => $min, 'timeStr' => $t,
+            'label' => $mm === 0 ? sprintf('%02d:00', $hh) : ''];
+        $timeToRow[$t] = $rowNum++;
+        $prev = $min;
+    }
+    $gtr = '48px';
+    foreach ($rows as $r) $gtr .= ' ' . ($r['type'] === 'gap' ? '18px' : '40px');
+    return ['rows' => $rows, 'timeToRow' => $timeToRow, 'gtr' => $gtr];
 }
 ?>
 
@@ -27,8 +54,9 @@ function calTimeToRow(string $time): int {
       <p class="no-results">You have no classes assigned yet.</p>
     <?php else: ?>
 
+    <?php $cal = buildCalendarRows($classes); ?>
     <div class="cal-wrapper">
-      <div class="cal-grid">
+      <div class="cal-grid" style="grid-template-rows: <?= $cal['gtr'] ?>">
 
         <!-- Corner + day headers -->
         <div class="cal-corner"></div>
@@ -36,31 +64,63 @@ function calTimeToRow(string $time): int {
           <div class="cal-day-header"><?= substr($day, 0, 3) ?></div>
         <?php endforeach; ?>
 
-        <!-- Time labels + background cells (07:00 to 21:30, 30-min slots) -->
-        <?php for ($i = 0; $i < 30; $i++):
-            $totalMin = 7 * 60 + $i * 30;
-            $hh    = intdiv($totalMin, 60);
-            $mm    = $totalMin % 60;
-            $label = $mm === 0 ? sprintf('%02d:00', $hh) : '';
-            $row   = $i + 2;
-        ?>
-          <div class="cal-time-label" style="grid-column:1;grid-row:<?= $row ?>"><?= $label ?></div>
-          <?php for ($col = 2; $col <= 8; $col++): ?>
-            <div class="cal-cell <?= $mm === 30 ? 'hour-start' : '' ?>"
-                 style="grid-column:<?= $col ?>;grid-row:<?= $row ?>"></div>
-          <?php endfor; ?>
-        <?php endfor; ?>
+        <!-- Time labels + background cells -->
+        <?php foreach ($cal['rows'] as $r): ?>
+          <?php if ($r['type'] === 'gap'): ?>
+            <div class="cal-gap-row" style="grid-column:1/span 8;grid-row:<?= $r['row'] ?>">
+              <?= $r['label'] ?>
+            </div>
+          <?php else: ?>
+            <div class="cal-time-label" style="grid-column:1;grid-row:<?= $r['row'] ?>"><?= $r['label'] ?></div>
+            <?php for ($col = 2; $col <= 8; $col++): ?>
+              <div class="cal-cell <?= $r['min'] % 60 === 30 ? 'hour-start' : '' ?>"
+                   style="grid-column:<?= $col ?>;grid-row:<?= $r['row'] ?>"></div>
+            <?php endfor; ?>
+          <?php endif; ?>
+        <?php endforeach; ?>
 
         <!-- Class cards -->
+        <?php
+            $classLanes = []; $classHasOverlap = [];
+            $byDayArr = [];
+            foreach ($classes as $c) $byDayArr[$c->day_of_week][] = $c;
+            foreach ($byDayArr as $_day => $dcs) {
+                usort($dcs, fn($a, $b) => strcmp($a->time, $b->time));
+                $laneEnd = [];
+                foreach ($dcs as $c) {
+                    [$h, $m] = array_map('intval', explode(':', $c->time));
+                    $s = $h * 60 + $m; $e = $s + $c->duration_min;
+                    $ln = -1;
+                    foreach ($laneEnd as $l => $le) { if ($le <= $s) { $ln = $l; break; } }
+                    if ($ln < 0) $ln = count($laneEnd);
+                    $laneEnd[$ln] = $e;
+                    $classLanes[$c->id] = $ln;
+                }
+                foreach ($dcs as $ci) {
+                    [$hi, $mi] = array_map('intval', explode(':', $ci->time));
+                    $si = $hi*60+$mi; $ei = $si + $ci->duration_min;
+                    foreach ($dcs as $cj) {
+                        if ($ci->id === $cj->id) continue;
+                        [$hj, $mj] = array_map('intval', explode(':', $cj->time));
+                        $sj = $hj*60+$mj; $ej = $sj + $cj->duration_min;
+                        if ($si < $ej && $ei > $sj) { $classHasOverlap[$ci->id] = true; break; }
+                    }
+                }
+            }
+        ?>
         <?php foreach ($classes as $class):
-            $row      = calTimeToRow($class->time);
+            $row      = $cal['timeToRow'][$class->time] ?? 2;
             $span     = max(1, (int)ceil($class->duration_min / 30));
             $col      = $dayToCol[$class->day_of_week] ?? 2;
             $enrolled = count($rosters[$class->id] ?? []);
             $rosterJson = h(json_encode($rosters[$class->id] ?? []));
+            $lane = $classLanes[$class->id] ?? 0;
+            $marginExtra = !empty($classHasOverlap[$class->id])
+                ? ($lane === 0 ? ';margin-right:50%' : ';margin-left:50%')
+                : '';
         ?>
           <div class="cal-class-card"
-               style="grid-column:<?= $col ?>;grid-row:<?= $row ?>/span <?= $span ?>"
+               style="grid-column:<?= $col ?>;grid-row:<?= $row ?>/span <?= $span ?><?= $marginExtra ?>"
                data-id="<?= $class->id ?>"
                data-name="<?= h($class->name) ?>"
                data-type="<?= h($class->type) ?>"

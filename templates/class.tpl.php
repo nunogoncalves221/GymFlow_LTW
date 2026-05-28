@@ -5,6 +5,40 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
     $p = array_filter(array_merge(['type' => $type, 'day' => $day, 'trainer' => $trainer, 'time' => $time], $override));
     return '/pages/index.php' . ($p ? '?' . http_build_query($p) : '');
 }
+
+if (!function_exists('buildCalendarRows')) {
+    function buildCalendarRows(array $classes): array {
+        $needed = [];
+        foreach ($classes as $c) {
+            [$h, $m] = array_map('intval', explode(':', $c->time));
+            $start = $h * 60 + $m;
+            for ($min = $start; $min < $start + $c->duration_min; $min += 30) $needed[$min] = true;
+        }
+        if (empty($needed)) {
+            for ($m = 7 * 60; $m < 22 * 60; $m += 30) $needed[$m] = true;
+        }
+        ksort($needed);
+
+        $rows = []; $timeToRow = []; $rowNum = 2; $prev = null;
+        foreach (array_keys($needed) as $min) {
+            if ($prev !== null && $min - $prev > 30) {
+                $fH = intdiv($prev + 30, 60); $fM = ($prev + 30) % 60;
+                $tH = intdiv($min, 60);       $tM = $min % 60;
+                $rows[] = ['type' => 'gap', 'row' => $rowNum++,
+                    'label' => sprintf('%02d:%02d', $fH, $fM) . ' – ' . sprintf('%02d:%02d', $tH, $tM)];
+            }
+            $hh = intdiv($min, 60); $mm = $min % 60;
+            $t  = sprintf('%02d:%02d', $hh, $mm);
+            $rows[] = ['type' => 'slot', 'row' => $rowNum, 'min' => $min, 'timeStr' => $t,
+                'label' => $mm === 0 ? sprintf('%02d:00', $hh) : ''];
+            $timeToRow[$t] = $rowNum++;
+            $prev = $min;
+        }
+        $gtr = '48px';
+        foreach ($rows as $r) $gtr .= ' ' . ($r['type'] === 'gap' ? '18px' : '40px');
+        return ['rows' => $rows, 'timeToRow' => $timeToRow, 'gtr' => $gtr];
+    }
+}
 ?>
 
 <?php function drawHeroBanner() { ?>
@@ -79,8 +113,23 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
 </a>
 <?php } ?>
 
-<?php function drawClassList(array $classes, array $types, array $trainers, string $filter_type, string $filter_day, string $filter_trainer, string $filter_time) { ?>
-  <?php $hasFilter = $filter_type || $filter_day || $filter_trainer || $filter_time; ?>
+<?php function drawClassList(array $classes, array $types, array $trainers, string $filter_type, string $filter_day, string $filter_trainer, string $filter_time, array $enrollment_counts = []) { ?>
+<?php
+  $hasFilter = $filter_type || $filter_day || $filter_trainer || $filter_time;
+  $dayToCol  = ['Monday'=>2,'Tuesday'=>3,'Wednesday'=>4,'Thursday'=>5,'Friday'=>6,'Saturday'=>7,'Sunday'=>8];
+
+  $grouped = [];
+  foreach ($classes as $c) {
+    if (!isset($grouped[$c->name])) {
+      $grouped[$c->name] = ['rep' => $c, 'sessions' => [], 'trainers' => [], 'days' => []];
+    }
+    $grouped[$c->name]['sessions'][] = $c;
+    $day3 = substr($c->day_of_week, 0, 3);
+    if (!in_array($day3, $grouped[$c->name]['days'])) $grouped[$c->name]['days'][] = $day3;
+    if ($c->trainer_name && !in_array($c->trainer_name, $grouped[$c->name]['trainers']))
+      $grouped[$c->name]['trainers'][] = $c->trainer_name;
+  }
+?>
 
   <div class="search-filters">
     <div class="filter-search-row">
@@ -130,25 +179,140 @@ function classFilterUrl(string $type, string $day, string $trainer, string $time
     </div>
     <p class="filter-results-count" id="filter-results-count"
        <?= $hasFilter ? '' : 'style="display:none"' ?>>
-      <?= count($classes) ?> class<?= count($classes) !== 1 ? 'es' : '' ?> found
+      <?= count($grouped) ?> class<?= count($grouped) !== 1 ? 'es' : '' ?> found
     </p>
   </div>
 
-  <section class="classes-grid">
-    <?php if (empty($classes)): ?>
+  <div class="view-toggle">
+    <button class="view-btn active" id="btn-view-classes">Classes</button>
+    <button class="view-btn" id="btn-view-schedule">Schedule</button>
+  </div>
+
+  <!-- Classes grid -->
+  <section class="classes-grid" id="view-classes">
+    <?php if (empty($grouped)): ?>
     <p class="no-results">No classes match your filters. <a href="/pages/index.php" class="filter-clear-inline">Clear filters</a></p>
     <?php endif; ?>
-    <?php foreach ($classes as $c): ?>
-    <a href="/pages/class.php?id=<?= $c->id ?>" class="class-card">
-      <img src="<?= h($c->image) ?>" alt="<?= h($c->name) ?>" class="class-card-thumb">
+
+    <?php foreach ($grouped as $name => $group):
+      $rep = $group['rep'];
+      $sessionsData = [];
+      foreach ($group['sessions'] as $s) {
+        $enrolled = $enrollment_counts[$s->id] ?? 0;
+        $sessionsData[] = [
+          'id'       => $s->id,
+          'day'      => $s->day_of_week,
+          'time'     => $s->time,
+          'duration' => $s->duration_min,
+          'capacity' => $s->capacity,
+          'enrolled' => $enrolled,
+          'trainer'  => $s->trainer_name ?: 'TBA',
+        ];
+      }
+    ?>
+    <div class="class-card"
+         data-name="<?= h($rep->name) ?>"
+         data-type="<?= h($rep->type) ?>"
+         data-description="<?= h($rep->description) ?>"
+         data-trainers="<?= h(implode(', ', $group['trainers']) ?: 'TBA') ?>"
+         data-sessions="<?= h(json_encode($sessionsData)) ?>">
+      <img src="<?= h($rep->image ?? '') ?>" alt="<?= h($rep->name) ?>" class="class-card-thumb">
       <article class="class-card-body">
-        <h2 class="class-card-name"><?= h($c->name) ?></h2>
-        <p class="class-card-meta"><?= h(substr($c->day_of_week, 0, 3)) ?> · <?= h($c->time) ?> · <?= $c->duration_min ?> min</p>
-        <p class="class-card-trainer"><?= h($c->trainer_name ?: 'TBA') ?></p>
+        <h2 class="class-card-name"><?= h($rep->name) ?></h2>
+        <p class="class-card-meta"><?= h(implode(' · ', $group['days'])) ?></p>
+        <p class="class-card-trainer"><?= h(implode(', ', $group['trainers']) ?: 'TBA') ?></p>
       </article>
-    </a>
+    </div>
     <?php endforeach; ?>
   </section>
+
+  <!-- Schedule grid -->
+  <?php $cal = buildCalendarRows($classes); ?>
+  <div class="cal-wrapper" id="view-schedule" style="display:none">
+    <div class="cal-grid" style="grid-template-rows: <?= $cal['gtr'] ?>">
+      <div class="cal-corner"></div>
+      <?php foreach (['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] as $day): ?>
+        <div class="cal-day-header"><?= substr($day, 0, 3) ?></div>
+      <?php endforeach; ?>
+
+      <?php foreach ($cal['rows'] as $r): ?>
+        <?php if ($r['type'] === 'gap'): ?>
+          <div class="cal-gap-row" style="grid-column:1/span 8;grid-row:<?= $r['row'] ?>">
+            <?= $r['label'] ?>
+          </div>
+        <?php else: ?>
+          <div class="cal-time-label" style="grid-column:1;grid-row:<?= $r['row'] ?>"><?= $r['label'] ?></div>
+          <?php for ($col = 2; $col <= 8; $col++): ?>
+            <div class="cal-cell <?= $r['min'] % 60 === 30 ? 'hour-start' : '' ?>"
+                 style="grid-column:<?= $col ?>;grid-row:<?= $r['row'] ?>"></div>
+          <?php endfor; ?>
+        <?php endif; ?>
+      <?php endforeach; ?>
+
+      <?php
+        $classLanes = []; $classHasOverlap = [];
+        $byDayArr = [];
+        foreach ($classes as $c) $byDayArr[$c->day_of_week][] = $c;
+        foreach ($byDayArr as $_day => $dcs) {
+            usort($dcs, fn($a, $b) => strcmp($a->time, $b->time));
+            $laneEnd = [];
+            foreach ($dcs as $c) {
+                [$h, $m] = array_map('intval', explode(':', $c->time));
+                $s = $h * 60 + $m; $e = $s + $c->duration_min;
+                $ln = -1;
+                foreach ($laneEnd as $l => $le) { if ($le <= $s) { $ln = $l; break; } }
+                if ($ln < 0) $ln = count($laneEnd);
+                $laneEnd[$ln] = $e;
+                $classLanes[$c->id] = $ln;
+            }
+            foreach ($dcs as $ci) {
+                [$hi, $mi] = array_map('intval', explode(':', $ci->time));
+                $si = $hi*60+$mi; $ei = $si + $ci->duration_min;
+                foreach ($dcs as $cj) {
+                    if ($ci->id === $cj->id) continue;
+                    [$hj, $mj] = array_map('intval', explode(':', $cj->time));
+                    $sj = $hj*60+$mj; $ej = $sj + $cj->duration_min;
+                    if ($si < $ej && $ei > $sj) { $classHasOverlap[$ci->id] = true; break; }
+                }
+            }
+        }
+      ?>
+      <?php foreach ($classes as $class):
+        $row  = $cal['timeToRow'][$class->time] ?? 2;
+        $span = max(1, (int)ceil($class->duration_min / 30));
+        $col  = $dayToCol[$class->day_of_week] ?? 2;
+        $lane = $classLanes[$class->id] ?? 0;
+        $marginExtra = !empty($classHasOverlap[$class->id])
+            ? ($lane === 0 ? ';margin-right:50%' : ';margin-left:50%')
+            : '';
+      ?>
+        <a href="/pages/class.php?id=<?= $class->id ?>" class="cal-class-card"
+           style="grid-column:<?= $col ?>;grid-row:<?= $row ?>/span <?= $span ?><?= $marginExtra ?>">
+          <div class="cal-class-name"><?= h($class->name) ?></div>
+          <div class="cal-class-time"><?= h($class->time) ?></div>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <!-- Class detail modal -->
+  <div id="class-info-modal" class="cal-modal-overlay" style="display:none">
+    <div class="cal-modal">
+      <button id="class-modal-close" class="modal-close" type="button">×</button>
+      <h2 id="cim-name" class="modal-class-name"></h2>
+      <p id="cim-type" class="cim-type-tag"></p>
+      <p id="cim-description" class="cim-description"></p>
+      <div class="modal-info-item" style="margin-bottom:1.25rem">
+        <div class="modal-info-label">Trainer(s)</div>
+        <div id="cim-trainers" class="modal-info-value"></div>
+      </div>
+      <h3 class="modal-section-title">Sessions</h3>
+      <table class="roster-table">
+        <thead><tr><th>Day</th><th>Time</th><th>Duration</th><th>Enrolled</th><th></th></tr></thead>
+        <tbody id="cim-sessions"></tbody>
+      </table>
+    </div>
+  </div>
 <?php } ?>
 
 <?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled_count, bool $is_enrolled, bool $has_reviewed = false) { ?>
