@@ -21,4 +21,4 @@ $weeklyUsed = MembershipPlan::getEnrollmentsThisWeek($db, $user->id);
 
 drawHeader($session, 'Membership Plans — GymFlow');
 drawMembershipPage($user, $plans, $current, $pending, $session, $weeklyUsed);
-drawFooter(); 
+drawFooter();

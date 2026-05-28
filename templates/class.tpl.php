@@ -316,8 +316,7 @@ if (!function_exists('buildCalendarRows')) {
 <?php } ?>
 
 <?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled_count, bool $is_enrolled, bool $has_reviewed = false) { ?>
-  <a href="/pages/index.php" class="back-link">← Back to classes</a>
-
+  <a href="#" onclick="history.back();return false;" class="back-link"><svg ...arrow SVG... /></a>
   <section class="class-detail">
 
     <article class="class-info-card">
@@ -439,4 +438,4 @@ if (!function_exists('buildCalendarRows')) {
     </section>
 
   </section>
-<?php } ?>
+<?php } ?> 

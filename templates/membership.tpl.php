@@ -5,13 +5,18 @@ declare(strict_types=1);
 <?php function drawMembershipPage(User $user, array $plans, ?MembershipPlan $current, ?array $pending, Session $session, int $weeklyUsed = 0) { ?>
 <section class="membership-page">
 
-  <a href="/pages/index.php" class="back-link">← Back to classes</a>
+  <a href="#" onclick="history.back();return false;" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></a>
 
   <div class="membership-header">
     <h2>Membership Plans</h2>
+    <?php if ($user->type === 'member'): ?>
     <p class="membership-subtitle">Choose the plan that fits your goals. Request a plan and an admin will activate it for you.</p>
+    <?php else: ?>
+    <p class="membership-subtitle">Overview of available membership plans.</p>
+    <?php endif; ?>
   </div>
 
+  <?php if ($user->type === 'member'): ?>
   <?php if ($current): ?>
     <div class="membership-current-banner">
       <span class="membership-current-label">Your current plan</span>
@@ -30,11 +35,11 @@ declare(strict_types=1);
       <span>⚠ You don't have an active membership plan. Choose one below to start enrolling in classes.</span>
     </div>
   <?php endif; ?>
-
   <?php if ($pending): ?>
     <div class="membership-pending-banner">
       <span>⏳ You have a pending request for the <strong><?= h($pending['plan_name']) ?></strong> plan, submitted on <?= h(substr($pending['created_at'], 0, 10)) ?>. Waiting for admin approval.</span>
     </div>
+  <?php endif; ?>
   <?php endif; ?>
 
   <div class="membership-plans-grid">
