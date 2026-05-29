@@ -2208,6 +2208,14 @@ a.btn-book {
     opacity: 0.6;
 }
 
+.equip-card--unavailable.equip-card--reserving {
+    opacity: 1;
+}
+
+.equip-card--unavailable.equip-card--reserving .equip-card-stripe {
+    background: var(--accent);
+}
+
 .equip-card-stripe {
     height: 3px;
     width: 100%;
@@ -3524,4 +3532,260 @@ a.btn-book {
     cursor: pointer;
     padding: 0.5rem 1rem;
     font-weight: 600;
+}
+
+/* EQUIPMENT RESERVATIONS */
+
+.equip-reserve-wrap {
+    margin-top: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.85rem;
+}
+
+.equip-reserve-toggle {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    text-align: center;
+}
+
+.equip-reserve-toggle:hover,
+.equip-reserve-toggle.is-open {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+}
+
+.equip-reserve-form {
+    display: none;
+    margin-top: 0.75rem;
+    animation: slideDown 0.18s ease;
+}
+
+.equip-reserve-form.is-open {
+    display: block;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.equip-res-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.equip-res-row-line {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.equip-res-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.equip-res-year {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin-left: 0.15rem;
+}
+
+.equip-res-sep {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-weight: 600;
+}
+
+.equip-res-tiny {
+    width: 2.4rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 0.82rem;
+    padding: 0.35rem 0.3rem;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.15s;
+    font-family: var(--font-body);
+}
+
+.equip-res-tiny:focus {
+    border-color: var(--accent);
+}
+
+.equip-res-times {
+    display: flex;
+    gap: 1.2rem;
+}
+
+.equip-res-time-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.equip-res-time-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.equip-res-hint {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 0.55rem;
+}
+
+.equip-res-submit {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    padding: 0.55rem 0;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.equip-res-submit:hover {
+    background: var(--accent-dim);
+}
+
+/* My upcoming reservations section */
+
+.equip-my-reservations {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.8rem;
+}
+
+.equip-my-res-title {
+    font-family: var(--font-head);
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.9rem;
+    color: var(--text);
+}
+
+.equip-res-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.equip-res-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 1rem;
+}
+
+.equip-res-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.equip-res-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.equip-res-time {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.equip-res-cancel-btn {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.equip-res-cancel-btn:hover {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+}
+
+.equip-res-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.equip-res-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.equip-res-edit-btn {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.equip-res-edit-btn:hover,
+.equip-res-edit-btn.is-open {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+}
+
+.equip-res-edit-form {
+    display: none;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    padding: 0.85rem 1rem;
+    animation: slideDown 0.18s ease;
+}
+
+.equip-res-edit-form.is-open {
+    display: block;
 }

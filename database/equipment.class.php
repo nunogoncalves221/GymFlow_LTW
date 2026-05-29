@@ -59,4 +59,17 @@ class Equipment {
     static function getTypes(PDO $db): array {
         return $db->query('SELECT DISTINCT type FROM equipment ORDER BY type')->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    static function getAvailableUnitsForSlot(PDO $db, int $id, string $date, string $startTime, string $endTime): int {
+        $stmt = $db->prepare('SELECT quantity FROM equipment WHERE id = ?');
+        $stmt->execute([$id]);
+        $quantity = (int)$stmt->fetchColumn();
+        $stmt = $db->prepare(
+            "SELECT COUNT(*) FROM equipment_reservations
+             WHERE equipment_id = ? AND date = ? AND status = 'active'
+             AND start_time < ? AND end_time > ?"
+        );
+        $stmt->execute([$id, $date, $endTime, $startTime]);
+        return max(0, $quantity - (int)$stmt->fetchColumn());
+    }
 }

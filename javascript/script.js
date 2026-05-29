@@ -1,3 +1,38 @@
+// ── Equipment reservation form toggle + auto-advance ──────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.equip-reserve-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var form = document.getElementById(btn.dataset.target);
+            if (!form) return;
+            var isOpen = form.classList.toggle('is-open');
+            btn.textContent = isOpen ? 'Cancel' : 'Reserve a slot';
+            btn.classList.toggle('is-open', isOpen);
+            var card = btn.closest('.equip-card');
+            if (card) card.classList.toggle('equip-card--reserving', isOpen);
+        });
+    });
+
+    document.querySelectorAll('.equip-res-edit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var form = document.getElementById(btn.dataset.target);
+            if (!form) return;
+            var isOpen = form.classList.toggle('is-open');
+            btn.textContent = isOpen ? 'Close' : 'Edit';
+            btn.classList.toggle('is-open', isOpen);
+        });
+    });
+
+    document.addEventListener('input', function (e) {
+        var input = e.target;
+        if (!input.classList.contains('equip-res-tiny')) return;
+        if (input.value.length >= parseInt(input.maxLength)) {
+            var all  = Array.from(input.closest('form').querySelectorAll('.equip-res-tiny'));
+            var next = all[all.indexOf(input) + 1];
+            if (next) { next.focus(); next.select(); }
+        }
+    });
+});
+
 function applySelectFilter(param, value) {
     var url = new URL(window.location.href);
     if (value) url.searchParams.set(param, value); else url.searchParams.delete(param);

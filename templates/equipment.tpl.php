@@ -12,7 +12,9 @@ function equipmentIcon(string $type): string {
 }
 ?>
 
-<?php function drawEquipmentPage(array $equipment, array $types, string $activeType): void { ?>
+<?php function drawEquipmentPage(array $equipment, array $types, string $activeType, Session $session, bool $is_member, array $reservations): void {
+    $today = date('Y-m-d');
+?>
 
 <section class="equip-page">
 
@@ -48,6 +50,76 @@ function equipmentIcon(string $type): string {
     </div>
   </div>
 
+  <?php if ($is_member && !empty($reservations)): ?>
+    <div class="equip-my-reservations">
+      <h3 class="equip-my-res-title">My upcoming reservations</h3>
+      <div class="equip-res-list">
+        <?php foreach ($reservations as $res):
+            [$resDay,   $resMonth] = [date('d', strtotime($res->date)), date('m', strtotime($res->date))];
+            [$startH,  $startM]   = explode(':', $res->start_time);
+            [$endH,    $endM]     = explode(':', $res->end_time);
+        ?>
+          <div class="equip-res-item">
+            <div class="equip-res-row">
+              <div class="equip-res-info">
+                <span class="equip-res-name"><?= h($res->equipment_name) ?></span>
+                <span class="equip-res-time">
+                  <?= h(date('D, d M', strtotime($res->date))) ?>
+                  &middot;
+                  <?= h($res->start_time) ?> – <?= h($res->end_time) ?>
+                </span>
+              </div>
+              <div class="equip-res-actions">
+                <button type="button" class="equip-res-edit-btn"
+                        data-target="edit-form-<?= $res->id ?>">Edit</button>
+                <form action="/actions/action_cancel_reservation.php" method="post"
+                      data-confirm="Cancel this reservation?">
+                  <?= $session->csrfField() ?>
+                  <input type="hidden" name="reservation_id" value="<?= $res->id ?>">
+                  <button type="submit" class="equip-res-cancel-btn">Cancel</button>
+                </form>
+              </div>
+            </div>
+            <div class="equip-res-edit-form" id="edit-form-<?= $res->id ?>">
+              <form action="/actions/action_edit_reservation.php" method="post">
+                <?= $session->csrfField() ?>
+                <input type="hidden" name="reservation_id" value="<?= $res->id ?>">
+                <div class="equip-res-fields">
+                  <div class="equip-res-row-line">
+                    <span class="equip-res-label">Date</span>
+                    <input type="text" name="date_day"   value="<?= $resDay ?>"   placeholder="dd" maxlength="2" class="equip-res-tiny" required>
+                    <span class="equip-res-sep">/</span>
+                    <input type="text" name="date_month" value="<?= $resMonth ?>" placeholder="mm" maxlength="2" class="equip-res-tiny" required>
+                    <span class="equip-res-year"><?= date('Y') ?></span>
+                  </div>
+                  <div class="equip-res-times">
+                    <div class="equip-res-time-group">
+                      <span class="equip-res-label">From</span>
+                      <div class="equip-res-time-row">
+                        <input type="text" name="start_hour"   value="<?= $startH ?>" placeholder="hh" maxlength="2" class="equip-res-tiny" required>
+                        <span class="equip-res-sep">:</span>
+                        <input type="text" name="start_minute" value="<?= $startM ?>" placeholder="mm" maxlength="2" class="equip-res-tiny" required>
+                      </div>
+                    </div>
+                    <div class="equip-res-time-group">
+                      <span class="equip-res-label">To</span>
+                      <div class="equip-res-time-row">
+                        <input type="text" name="end_hour"   value="<?= $endH ?>" placeholder="hh" maxlength="2" class="equip-res-tiny" required>
+                        <span class="equip-res-sep">:</span>
+                        <input type="text" name="end_minute" value="<?= $endM ?>" placeholder="mm" maxlength="2" class="equip-res-tiny" required>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="equip-res-submit">Save changes</button>
+              </form>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  <?php endif; ?>
+
   <div class="equip-filters">
     <a href="/pages/equipment.php"
        class="equip-pill <?= $activeType === '' ? 'active' : '' ?>">All</a>
@@ -81,6 +153,52 @@ function equipmentIcon(string $type): string {
                 <?= $item->isAvailable() ? 'Available' : 'Not available' ?>
               </div>
             </div>
+
+            <?php if ($is_member): ?>
+              <div class="equip-reserve-wrap">
+                <button type="button"
+                        class="equip-reserve-toggle"
+                        data-target="reserve-form-<?= $item->id ?>">
+                  Reserve a slot
+                </button>
+                <div class="equip-reserve-form" id="reserve-form-<?= $item->id ?>">
+                  <form action="/actions/action_reserve_equipment.php" method="post">
+                    <?= $session->csrfField() ?>
+                    <input type="hidden" name="equipment_id" value="<?= $item->id ?>">
+                    <div class="equip-res-fields">
+                      <div class="equip-res-row-line">
+                        <span class="equip-res-label">Date</span>
+                        <input type="text" name="date_day"   placeholder="dd" maxlength="2" class="equip-res-tiny" required>
+                        <span class="equip-res-sep">/</span>
+                        <input type="text" name="date_month" placeholder="mm" maxlength="2" class="equip-res-tiny" required>
+                        <span class="equip-res-year"><?= date('Y') ?></span>
+                      </div>
+                      <div class="equip-res-times">
+                        <div class="equip-res-time-group">
+                          <span class="equip-res-label">From</span>
+                          <div class="equip-res-time-row">
+                            <input type="text" name="start_hour"   placeholder="hh" maxlength="2" class="equip-res-tiny" required>
+                            <span class="equip-res-sep">:</span>
+                            <input type="text" name="start_minute" placeholder="mm" maxlength="2" class="equip-res-tiny" required>
+                          </div>
+                        </div>
+                        <div class="equip-res-time-group">
+                          <span class="equip-res-label">To</span>
+                          <div class="equip-res-time-row">
+                            <input type="text" name="end_hour"   placeholder="hh" maxlength="2" class="equip-res-tiny" required>
+                            <span class="equip-res-sep">:</span>
+                            <input type="text" name="end_minute" placeholder="mm" maxlength="2" class="equip-res-tiny" required>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="equip-res-hint">10 min – 2 h · up to 1 week in advance · <?= $item->quantity ?> unit<?= $item->quantity !== 1 ? 's' : '' ?> total</p>
+                    <button type="submit" class="equip-res-submit">Confirm reservation</button>
+                  </form>
+                </div>
+              </div>
+            <?php endif; ?>
+
           </div>
         </article>
       <?php endforeach; ?>
@@ -89,4 +207,4 @@ function equipmentIcon(string $type): string {
 
 </section>
 
-<?php } ?> 
+<?php } ?>

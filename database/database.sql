@@ -109,6 +109,18 @@ CREATE TABLE IF NOT EXISTS nutrition_meals (
     notes            TEXT    NOT NULL DEFAULT ''
 );
 
+-- Equipment Reservations
+CREATE TABLE IF NOT EXISTS equipment_reservations (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    equipment_id INTEGER NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+    date         TEXT    NOT NULL,
+    start_time   TEXT    NOT NULL,
+    end_time     TEXT    NOT NULL,
+    status       TEXT    NOT NULL DEFAULT 'active'
+                         CHECK(status IN ('active', 'cancelled'))
+);
+
 -- Disputes & Feedback
 CREATE TABLE IF NOT EXISTS disputes (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
