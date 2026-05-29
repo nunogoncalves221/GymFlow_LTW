@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // ── Equipment filter pills — replace history entry instead of pushing ────
+    document.querySelectorAll('.equip-pill').forEach(function (pill) {
+        pill.addEventListener('click', function (e) {
+            e.preventDefault();
+            window.location.replace(this.href);
+        });
+    });
+
     document.addEventListener('input', function (e) {
         var input = e.target;
         if (!input.classList.contains('equip-res-tiny')) return;
