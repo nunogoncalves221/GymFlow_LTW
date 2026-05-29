@@ -55,14 +55,24 @@ function equipmentIcon(string $type): string {
       <h3 class="equip-my-res-title">My upcoming reservations</h3>
       <div class="equip-res-list">
         <?php foreach ($reservations as $res):
-            [$resDay,   $resMonth] = [date('d', strtotime($res->date)), date('m', strtotime($res->date))];
-            [$startH,  $startM]   = explode(':', $res->start_time);
-            [$endH,    $endM]     = explode(':', $res->end_time);
+            [$resDay,  $resMonth] = [date('d', strtotime($res->date)), date('m', strtotime($res->date))];
+            [$startH,  $startM]  = explode(':', $res->start_time);
+            [$endH,    $endM]    = explode(':', $res->end_time);
+            $now   = date('H:i');
+            $isNow = $res->date === date('Y-m-d') && $res->start_time <= $now && $res->end_time > $now;
         ?>
-          <div class="equip-res-item">
+          <div class="equip-res-item <?= $isNow ? 'equip-res-item--active' : '' ?>">
             <div class="equip-res-row">
               <div class="equip-res-info">
-                <span class="equip-res-name"><?= h($res->equipment_name) ?></span>
+                <span class="equip-res-name">
+                  <?php if ($isNow): ?>
+                    <span class="equip-live-dot" style="display:inline-block;margin-right:.35rem;vertical-align:middle;"></span>
+                  <?php endif; ?>
+                  <?= h($res->equipment_name) ?>
+                  <?php if ($isNow): ?>
+                    <span class="equip-res-active-badge">In use</span>
+                  <?php endif; ?>
+                </span>
                 <span class="equip-res-time">
                   <?= h(date('D, d M', strtotime($res->date))) ?>
                   &middot;
@@ -70,14 +80,23 @@ function equipmentIcon(string $type): string {
                 </span>
               </div>
               <div class="equip-res-actions">
-                <button type="button" class="equip-res-edit-btn"
-                        data-target="edit-form-<?= $res->id ?>">Edit</button>
-                <form action="/actions/action_cancel_reservation.php" method="post"
-                      data-confirm="Cancel this reservation?">
-                  <?= $session->csrfField() ?>
-                  <input type="hidden" name="reservation_id" value="<?= $res->id ?>">
-                  <button type="submit" class="equip-res-cancel-btn">Cancel</button>
-                </form>
+                <?php if ($isNow): ?>
+                  <form action="/actions/action_stop_reservation.php" method="post"
+                        data-confirm="End this reservation now?">
+                    <?= $session->csrfField() ?>
+                    <input type="hidden" name="reservation_id" value="<?= $res->id ?>">
+                    <button type="submit" class="equip-res-stop-btn">End</button>
+                  </form>
+                <?php else: ?>
+                  <button type="button" class="equip-res-edit-btn"
+                          data-target="edit-form-<?= $res->id ?>">Edit</button>
+                  <form action="/actions/action_cancel_reservation.php" method="post"
+                        data-confirm="Cancel this reservation?">
+                    <?= $session->csrfField() ?>
+                    <input type="hidden" name="reservation_id" value="<?= $res->id ?>">
+                    <button type="submit" class="equip-res-cancel-btn">Cancel</button>
+                  </form>
+                <?php endif; ?>
               </div>
             </div>
             <div class="equip-res-edit-form" id="edit-form-<?= $res->id ?>">
@@ -156,11 +175,37 @@ function equipmentIcon(string $type): string {
 
             <?php if ($is_member): ?>
               <div class="equip-reserve-wrap">
-                <button type="button"
-                        class="equip-reserve-toggle"
-                        data-target="reserve-form-<?= $item->id ?>">
-                  Reserve a slot
-                </button>
+                <div class="equip-reserve-btns">
+                  <?php if ($item->isAvailable()): ?>
+                    <button type="button"
+                            class="equip-reserve-now-toggle"
+                            data-target="reserve-now-<?= $item->id ?>"
+                            data-other="reserve-form-<?= $item->id ?>">
+                      Reserve Now
+                    </button>
+                  <?php endif; ?>
+                  <button type="button"
+                          class="equip-reserve-toggle"
+                          data-target="reserve-form-<?= $item->id ?>"
+                          data-other="reserve-now-<?= $item->id ?>">
+                    Reserve a slot
+                  </button>
+                </div>
+
+                <div class="equip-reserve-now-form" id="reserve-now-<?= $item->id ?>">
+                  <form action="/actions/action_reserve_now.php" method="post">
+                    <?= $session->csrfField() ?>
+                    <input type="hidden" name="equipment_id" value="<?= $item->id ?>">
+                    <div class="equip-res-row-line">
+                      <span class="equip-res-label">Until</span>
+                      <input type="text" name="end_hour"   placeholder="hh" maxlength="2" class="equip-res-tiny" required>
+                      <span class="equip-res-sep">:</span>
+                      <input type="text" name="end_minute" placeholder="mm" maxlength="2" class="equip-res-tiny" required>
+                    </div>
+                    <button type="submit" class="equip-res-submit" style="margin-top:.6rem;">Confirm</button>
+                  </form>
+                </div>
+
                 <div class="equip-reserve-form" id="reserve-form-<?= $item->id ?>">
                   <form action="/actions/action_reserve_equipment.php" method="post">
                     <?= $session->csrfField() ?>

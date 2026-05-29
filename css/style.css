@@ -3544,12 +3544,12 @@ a.btn-book {
 
 .equip-reserve-toggle {
     width: 100%;
-    background: transparent;
-    border: 1px solid var(--border-light);
+    background: var(--accent);
+    color: #000;
+    border: none;
     border-radius: var(--radius-sm);
-    color: var(--text-muted);
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.04em;
     padding: 0.5rem 0.75rem;
     cursor: pointer;
@@ -3557,11 +3557,14 @@ a.btn-book {
     text-align: center;
 }
 
-.equip-reserve-toggle:hover,
+.equip-reserve-toggle:hover {
+    background: var(--accent-dim);
+}
+
 .equip-reserve-toggle.is-open {
-    background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
+    background: var(--bg-hover);
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
 }
 
 .equip-reserve-form {
@@ -3788,4 +3791,87 @@ a.btn-book {
 
 .equip-res-edit-form.is-open {
     display: block;
+}
+
+.equip-reserve-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.equip-reserve-now-toggle,
+.equip-reserve-btns .equip-reserve-toggle {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    text-align: center;
+}
+
+.equip-reserve-now-toggle:hover,
+.equip-reserve-btns .equip-reserve-toggle:hover {
+    background: var(--accent-dim);
+}
+
+.equip-reserve-now-toggle.is-open,
+.equip-reserve-btns .equip-reserve-toggle.is-open {
+    background: var(--bg-hover);
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
+}
+
+.equip-reserve-now-form {
+    display: none;
+    margin-top: 0.75rem;
+    animation: slideDown 0.18s ease;
+}
+
+.equip-reserve-now-form.is-open {
+    display: block;
+}
+
+/* Active / in-use reservation highlight */
+
+.equip-res-item--active .equip-res-row {
+    background: rgba(232, 255, 71, 0.06);
+    border-color: var(--accent);
+}
+
+.equip-res-active-badge {
+    display: inline-block;
+    background: rgba(232, 255, 71, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(232, 255, 71, 0.35);
+    border-radius: 999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.1rem 0.45rem;
+    vertical-align: middle;
+    margin-left: 0.3rem;
+}
+
+.equip-res-stop-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.equip-res-stop-btn:hover {
+    background: var(--accent-dim);
 }

@@ -1,14 +1,41 @@
 // ── Equipment reservation form toggle + auto-advance ──────────────────────
 document.addEventListener('DOMContentLoaded', function () {
+    function closeReservePanel(targetId, btn, defaultLabel) {
+        var panel = document.getElementById(targetId);
+        if (panel) panel.classList.remove('is-open');
+        if (btn) { btn.textContent = defaultLabel; btn.classList.remove('is-open'); }
+    }
+
     document.querySelectorAll('.equip-reserve-toggle').forEach(function (btn) {
         btn.addEventListener('click', function () {
-            var form = document.getElementById(btn.dataset.target);
+            var form  = document.getElementById(btn.dataset.target);
+            var other = document.getElementById(btn.dataset.other);
             if (!form) return;
+            // Close the "Reserve Now" panel if open
+            var nowBtn = btn.closest('.equip-reserve-wrap').querySelector('.equip-reserve-now-toggle');
+            closeReservePanel(btn.dataset.other, nowBtn, 'Reserve Now');
             var isOpen = form.classList.toggle('is-open');
             btn.textContent = isOpen ? 'Cancel' : 'Reserve a slot';
             btn.classList.toggle('is-open', isOpen);
             var card = btn.closest('.equip-card');
             if (card) card.classList.toggle('equip-card--reserving', isOpen);
+        });
+    });
+
+    document.querySelectorAll('.equip-reserve-now-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var form = document.getElementById(btn.dataset.target);
+            if (!form) return;
+            // Close the "Reserve a slot" panel if open
+            var slotBtn = btn.closest('.equip-reserve-wrap').querySelector('.equip-reserve-toggle');
+            closeReservePanel(btn.dataset.other, slotBtn, 'Reserve a slot');
+            if (slotBtn) {
+                var card = slotBtn.closest('.equip-card');
+                if (card) card.classList.remove('equip-card--reserving');
+            }
+            var isOpen = form.classList.toggle('is-open');
+            btn.textContent = isOpen ? 'Cancel' : 'Reserve Now';
+            btn.classList.toggle('is-open', isOpen);
         });
     });
 
