@@ -2204,12 +2204,11 @@ a.btn-book {
     border-color: var(--border-light);
 }
 
-.equip-card--unavailable {
-    opacity: 0.6;
-}
-
-.equip-card--unavailable.equip-card--reserving {
-    opacity: 1;
+.equip-card--unavailable:not(.equip-card--reserving) .equip-card-stripe,
+.equip-card--unavailable:not(.equip-card--reserving) .equip-card-top,
+.equip-card--unavailable:not(.equip-card--reserving) .equip-name,
+.equip-card--unavailable:not(.equip-card--reserving) .equip-card-footer {
+    opacity: 0.5;
 }
 
 .equip-card--unavailable.equip-card--reserving .equip-card-stripe {
