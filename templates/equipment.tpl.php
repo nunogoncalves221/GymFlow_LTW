@@ -2,11 +2,12 @@
 declare(strict_types=1);
 
 function equipmentIcon(string $type): string {
+    $dir = __DIR__ . '/../docs/icons/';
     return match (strtolower($type)) {
-        'cardio'     => '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
-        'weights'    => '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/><path d="M4 8h2v8H4zM18 8h2v8h-2z"/><path d="M2 10h2v4H2zM20 10h2v4h-2z"/></svg>',
-        'functional' => '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>',
-        default      => '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+        'cardio'     => file_get_contents($dir . 'cardio.svg'),
+        'weights'    => file_get_contents($dir . 'dumbbell.svg'),
+        'functional' => file_get_contents($dir . 'clock.svg'),
+        default      => file_get_contents($dir . 'monitor.svg'),
     };
 }
 ?>
@@ -17,7 +18,7 @@ function equipmentIcon(string $type): string {
 
   <div class="equip-header">
     <div class="equip-header-text">
-      <a href="#" onclick="history.back();return false;" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></a>
+      <a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
       <h2 class="equip-title">Equipment</h2>
       <p class="equip-subtitle">Current availability in the main training area</p>
     </div>
@@ -76,7 +77,7 @@ function equipmentIcon(string $type): string {
                 <strong><?= $item->in_use ?> / <?= $item->quantity ?></strong> em uso
               </span>
               <div class="equip-status <?= $item->isAvailable() ? 'status--available' : 'status--unavailable' ?>">
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+                <?php include __DIR__ . '/../docs/icons/dot.svg'; ?>
                 <?= $item->isAvailable() ? 'Available' : 'Not available' ?>
               </div>
             </div>

@@ -6,7 +6,7 @@ require_once(__DIR__ . '/../database/membership_plan.class.php');
 <?php function drawProfileForm(User $user, ?Trainer $trainer, Session $session, ?MembershipPlan $currentPlan = null) { ?>
   <section class="profile-page">
 
-    <a href="#" onclick="history.back();return false;" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></a>
+    <a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
 
     <article class="profile-hero">
       <div class="profile-avatar-wrap">
@@ -16,7 +16,7 @@ require_once(__DIR__ . '/../database/membership_plan.class.php');
           <div class="profile-avatar"><?= h(initials($user->name)) ?></div>
         <?php endif; ?>
         <button type="button" class="avatar-edit-overlay" id="avatar-edit-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <?php include __DIR__ . '/../docs/icons/edit.svg'; ?>
           <span>Edit</span>
         </button>
         <div class="avatar-edit-menu" id="avatar-edit-menu">

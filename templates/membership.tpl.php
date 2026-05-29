@@ -5,7 +5,7 @@ declare(strict_types=1);
 <?php function drawMembershipPage(User $user, array $plans, ?MembershipPlan $current, ?array $pending, Session $session, int $weeklyUsed = 0) { ?>
 <section class="membership-page">
 
-  <a href="#" onclick="history.back();return false;" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></a>
+  <a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
 
   <div class="membership-header">
     <h2>Membership Plans</h2>
@@ -68,9 +68,7 @@ declare(strict_types=1);
         <ul class="plan-features">
           <?php foreach ($plan->features as $feature): ?>
             <li>
-              <svg class="feature-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l6.879-6.879a1 1 0 011.414 0z" clip-rule="evenodd"/>
-              </svg>
+              <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
               <?= h($feature) ?>
             </li>
           <?php endforeach; ?>

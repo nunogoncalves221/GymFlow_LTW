@@ -31,5 +31,7 @@ drawHeader($session, 'GymFlow — Classes');
 drawHeroBanner();
 drawTrainersBanner($session);
 drawEquipmentBanner($equipment, $session);
+drawNutritionBanner($session);
 drawClassList($classes, $types, $trainers, $filter_type, $filter_day, $filter_trainer, $filter_time, $enrollment_counts);
+drawPricingSection();
 drawFooter();

@@ -4,6 +4,27 @@ function applySelectFilter(param, value) {
     window.location.href = url.toString();
 }
 
+function escapeHtml(str) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(str));
+    return d.innerHTML;
+}
+
+function openDisputeModal(id, data) {
+    document.getElementById('modal-id').value = id;
+    document.getElementById('modal-status').value = data.status;
+    document.getElementById('modal-response').value = data.response;
+    document.getElementById('modal-meta').innerHTML =
+        '<strong>' + escapeHtml(data.author) + '</strong> &mdash; ' + escapeHtml(data.category) +
+        ' &mdash; <span class="dispute-date">' + escapeHtml(data.date) + '</span>';
+    document.getElementById('modal-desc').textContent = data.desc;
+    document.getElementById('dispute-modal').classList.add('is-open');
+}
+
+function closeDisputeModal() {
+    document.getElementById('dispute-modal').classList.remove('is-open');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     // ── Flash message auto-dismiss ─────────────────────────────────────────
@@ -25,6 +46,39 @@ document.addEventListener('DOMContentLoaded', function () {
             if (el.parentNode) el.parentNode.removeChild(el);
         }, 420);
     }
+
+    // ── Back links ─────────────────────────────────────────────────────────
+    document.querySelectorAll('a.back-link[href="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            e.preventDefault();
+            history.back();
+        });
+    });
+
+    // ── Confirm dialogs (buttons and forms) ───────────────────────────────
+    document.querySelectorAll('button[data-confirm]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            if (!confirm(this.dataset.confirm)) e.preventDefault();
+        });
+    });
+
+    document.querySelectorAll('form[data-confirm]').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+            if (!confirm(this.dataset.confirm)) e.preventDefault();
+        });
+    });
+
+    // ── Auto-submit selects ───────────────────────────────────────────────
+    document.querySelectorAll('select[data-auto-submit]').forEach(function (sel) {
+        sel.addEventListener('change', function () { this.form.submit(); });
+    });
+
+    // ── Filter selects ────────────────────────────────────────────────────
+    document.querySelectorAll('select[data-filter-param]').forEach(function (sel) {
+        sel.addEventListener('change', function () {
+            applySelectFilter(this.dataset.filterParam, this.value);
+        });
+    });
 
     // ── Report form: character counter + submit confirmation ───────────────
     var reportTextarea = document.querySelector('.disputes-page .dispute-textarea');
@@ -145,12 +199,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         });
-    }
-
-    function escapeHtml(str) {
-        var d = document.createElement('div');
-        d.appendChild(document.createTextNode(str));
-        return d.innerHTML;
     }
 
     // ── Trainer dashboard calendar modal ──────────────────────────────────
@@ -287,6 +335,87 @@ document.addEventListener('DOMContentLoaded', function () {
             btnViewClasses.classList.remove('active');
             viewClassesEl.style.display = 'none';
             viewScheduleEl.style.display = '';
+        });
+    }
+
+    // ── Dispute modal ──────────────────────────────────────────────────────
+    var disputeModal = document.getElementById('dispute-modal');
+    if (disputeModal) {
+        document.querySelectorAll('[data-dispute-id]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                openDisputeModal(parseInt(this.dataset.disputeId), JSON.parse(this.dataset.dispute));
+            });
+        });
+
+        document.querySelectorAll('.close-dispute-modal').forEach(function (btn) {
+            btn.addEventListener('click', function () { closeDisputeModal(); });
+        });
+
+        disputeModal.addEventListener('click', function (e) {
+            if (e.target === this) closeDisputeModal();
+        });
+    }
+
+    // ── Nutrition plans modal ──────────────────────────────────────────────
+    var planModal = document.getElementById('plan-modal');
+    if (planModal) {
+        document.getElementById('btn-new-plan').addEventListener('click', function () {
+            planModal.hidden = false;
+        });
+        document.getElementById('btn-cancel-plan').addEventListener('click', function () {
+            planModal.hidden = true;
+        });
+        planModal.addEventListener('click', function (e) {
+            if (e.target === planModal) planModal.hidden = true;
+        });
+
+        var mealCount = 3;
+        document.getElementById('btn-add-meal').addEventListener('click', function () {
+            var i = mealCount++;
+            var container = document.getElementById('meals-container');
+            var row = document.createElement('div');
+            row.className = 'meal-row';
+            row.innerHTML =
+                '<span class="meal-index">' + (i + 1) + '</span>' +
+                '<input type="text"   name="meals[' + i + '][name]"        placeholder="Meal name"     maxlength="80">' +
+                '<input type="text"   name="meals[' + i + '][time_of_day]" placeholder="e.g. 13:00"    maxlength="20">' +
+                '<input type="number" name="meals[' + i + '][calories]"    placeholder="kcal" min="0" max="5000">' +
+                '<input type="text"   name="meals[' + i + '][notes]"       placeholder="Notes (optional)" maxlength="200">';
+            container.appendChild(row);
+        });
+
+        document.querySelectorAll('.btn-meals-toggle').forEach(function (btn) {
+            btn.addEventListener('click', async function () {
+                var planId = btn.dataset.plan;
+                var box = document.getElementById('meals-' + planId);
+                if (!box.hidden) { box.hidden = true; btn.textContent = 'View Meals'; return; }
+                box.hidden = false;
+                btn.textContent = 'Hide Meals';
+                if (box.dataset.loaded) return;
+                box.dataset.loaded = '1';
+                try {
+                    var res = await fetch('/actions/action_get_meals.php?plan_id=' + planId);
+                    var data = await res.json();
+                    if (!data.meals || data.meals.length === 0) {
+                        box.innerHTML = '<p class="hint">No meals added.</p>';
+                        return;
+                    }
+                    var html = '<table class="meals-table"><thead><tr><th>Meal</th><th>Time</th><th>kcal</th><th>Notes</th></tr></thead><tbody>';
+                    data.meals.forEach(function (m) {
+                        html += '<tr>' +
+                            '<td>' + escapeHtml(m.name) + '</td>' +
+                            '<td>' + escapeHtml(m.time_of_day) + '</td>' +
+                            '<td>' + (m.calories > 0 ? m.calories : '—') + '</td>' +
+                            '<td>' + escapeHtml(m.notes) + '</td>' +
+                            '</tr>';
+                    });
+                    html += '</tbody></table>';
+                    box.innerHTML = html;
+                } catch (e) {
+                    box.innerHTML = '<p class="hint">Could not load meals.</p>';
+                }
+            });
         });
     }
 

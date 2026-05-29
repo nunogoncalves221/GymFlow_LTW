@@ -3,6 +3,7 @@ declare(strict_types=1);
 ?>
 
 <?php function drawRegisterForm(Session $session) { ?>
+  <a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
   <section class="auth-page">
     <article class="auth-card">
       <h2>Register</h2>

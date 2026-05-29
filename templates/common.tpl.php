@@ -39,11 +39,7 @@ require_once(__DIR__ . '/../utils/session.php');
 
 <?php function drawLogoutForm(Session $session) { ?>
   <div class="header-user-actions">
-    <?php if ($session->getType() === 'member'): ?>
-      <a href="/pages/nutrition_plans.php" class="btn-profile">Nutrition</a>
-    <?php endif; ?>
     <?php if ($session->getType() === 'trainer'): ?>
-      <a href="/pages/nutrition_plans.php" class="btn-profile">Nutrition Plans</a>
       <a href="/pages/trainer_dashboard.php" class="btn-profile">Dashboard</a>
     <?php endif; ?>
     <?php if ($session->getType() === 'admin'): ?>
@@ -53,6 +49,119 @@ require_once(__DIR__ . '/../utils/session.php');
     <?php endif; ?>
     <a href="/pages/profile.php" class="btn-profile"><?= h($session->getName()) ?></a>
   </div>
+<?php } ?>
+
+<?php function drawPricingSection() { ?>
+<section class="pricing-section">
+  <div class="membership-header">
+    <h2>Membership Plans</h2>
+    <p class="membership-subtitle">Choose the plan that fits your lifestyle.</p>
+  </div>
+  <div class="membership-plans-grid">
+
+    <article class="plan-card">
+      <div class="plan-header">
+        <h3 class="plan-name">Basic</h3>
+        <div class="plan-price">
+          <span class="plan-price-amount">€9.99</span>
+          <span class="plan-price-period">/month</span>
+        </div>
+        <p class="plan-description">Perfect to get started. Access to selected classes with a weekly limit.</p>
+      </div>
+      <ul class="plan-features">
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          2 classes per week
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Access to Yoga and Meditation classes
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Locker room access
+        </li>
+      </ul>
+      <div class="plan-action">
+        <a href="/pages/membership.php" class="btn-plan">Get Started</a>
+      </div>
+    </article>
+
+    <article class="plan-card">
+      <div class="plan-header">
+        <h3 class="plan-name">Standard</h3>
+        <div class="plan-price">
+          <span class="plan-price-amount">€19.99</span>
+          <span class="plan-price-period">/month</span>
+        </div>
+        <p class="plan-description">Great for regular gym-goers. More classes, more flexibility.</p>
+      </div>
+      <ul class="plan-features">
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          5 classes per week
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Access to all class types
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Locker room access
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Guest pass once a month
+        </li>
+      </ul>
+      <div class="plan-action">
+        <a href="/pages/membership.php" class="btn-plan">Get Started</a>
+      </div>
+    </article>
+
+    <article class="plan-card plan-card--featured">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-header">
+        <h3 class="plan-name">Premium</h3>
+        <div class="plan-price">
+          <span class="plan-price-amount">€29.99</span>
+          <span class="plan-price-period">/month</span>
+        </div>
+        <p class="plan-description">Unlimited access to all classes and priority enrollment.</p>
+      </div>
+      <ul class="plan-features">
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Unlimited classes
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Access to all class types
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Priority enrollment
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Locker room access
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Guest pass twice a month
+        </li>
+        <li>
+          <?php include __DIR__ . '/../docs/icons/check.svg'; ?>
+          Personal trainer consultation
+        </li>
+      </ul>
+      <div class="plan-action">
+        <a href="/pages/membership.php" class="btn-plan">Get Started</a>
+      </div>
+    </article>
+
+  </div>
+</section>
 <?php } ?>
 
 <?php function drawFooter() { ?>

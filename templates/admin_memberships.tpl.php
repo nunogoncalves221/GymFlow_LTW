@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../database/user.class.php');
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="action" value="reject">
                 <input type="hidden" name="request_id" value="<?= $req['id'] ?>">
-                <button type="submit" class="btn-link" onclick="return confirm('Reject this request?')">Reject</button>
+                <button type="submit" class="btn-link" data-confirm="Reject this request?">Reject</button>
               </form>
             </td>
           </tr>

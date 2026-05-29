@@ -5,6 +5,7 @@ declare(strict_types=1);
 function drawTrainerNutritionPlans(
     Trainer $trainer, array $plans, array $members, Session $session
 ) { ?>
+  <a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
   <section class="nutrition-section">
 
     <header class="dashboard-header">
@@ -105,7 +106,7 @@ function drawTrainerNutritionPlans(
             <footer class="plan-card-footer">
               <span class="plan-date">Created <?= h(substr($plan->created_at, 0, 10)) ?></span>
               <form method="post" action="/actions/action_delete_nutrition_plan.php"
-                    onsubmit="return confirm('Delete this plan?')">
+                    data-confirm="Delete this plan?">
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="plan_id" value="<?= h((string)$plan->id) ?>">
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -116,80 +117,12 @@ function drawTrainerNutritionPlans(
       </div>
     <?php endif; ?>
   </section>
-
-  <script>
-    // Modal open/close
-    document.getElementById('btn-new-plan').addEventListener('click', () => {
-      document.getElementById('plan-modal').hidden = false;
-    });
-    document.getElementById('btn-cancel-plan').addEventListener('click', () => {
-      document.getElementById('plan-modal').hidden = true;
-    });
-    document.getElementById('plan-modal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('plan-modal'))
-        document.getElementById('plan-modal').hidden = true;
-    });
-
-    // Add meal row
-    let mealCount = 3;
-    document.getElementById('btn-add-meal').addEventListener('click', () => {
-      const i = mealCount++;
-      const container = document.getElementById('meals-container');
-      const row = document.createElement('div');
-      row.className = 'meal-row';
-      row.innerHTML = `
-        <span class="meal-index">${i + 1}</span>
-        <input type="text"   name="meals[${i}][name]"        placeholder="Meal name"     maxlength="80">
-        <input type="text"   name="meals[${i}][time_of_day]" placeholder="e.g. 13:00"    maxlength="20">
-        <input type="number" name="meals[${i}][calories]"    placeholder="kcal" min="0" max="5000">
-        <input type="text"   name="meals[${i}][notes]"       placeholder="Notes (optional)" maxlength="200">
-      `;
-      container.appendChild(row);
-    });
-
-    // Toggle meals list via fetch
-    document.querySelectorAll('.btn-meals-toggle').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const planId = btn.dataset.plan;
-        const box = document.getElementById('meals-' + planId);
-        if (!box.hidden) { box.hidden = true; btn.textContent = 'View Meals'; return; }
-        box.hidden = false;
-        btn.textContent = 'Hide Meals';
-        if (box.dataset.loaded) return;
-        box.dataset.loaded = '1';
-        try {
-          const res = await fetch('/actions/action_get_meals.php?plan_id=' + planId);
-          const data = await res.json();
-          if (!data.meals || data.meals.length === 0) {
-            box.innerHTML = '<p class="hint">No meals added.</p>';
-            return;
-          }
-          let html = '<table class="meals-table"><thead><tr><th>Meal</th><th>Time</th><th>kcal</th><th>Notes</th></tr></thead><tbody>';
-          data.meals.forEach(m => {
-            html += `<tr>
-              <td>${esc(m.name)}</td>
-              <td>${esc(m.time_of_day)}</td>
-              <td>${m.calories > 0 ? m.calories : '—'}</td>
-              <td>${esc(m.notes)}</td>
-            </tr>`;
-          });
-          html += '</tbody></table>';
-          box.innerHTML = html;
-        } catch (e) {
-          box.innerHTML = '<p class="hint">Could not load meals.</p>';
-        }
-      });
-    });
-
-    function esc(str) {
-      const d = document.createElement('div'); d.textContent = str; return d.innerHTML;
-    }
-  </script>
 <?php } ?>
 
 <?php
 /* ─── MEMBER VIEW ───────────────────────────────────────────────────────── */
 function drawMemberNutritionPlans(array $plans, Session $session, PDO $db) { ?>
+  <a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
   <section class="nutrition-section">
 
     <header class="dashboard-header">

@@ -59,20 +59,22 @@ $DISPUTE_CATEGORIES = [
               <form method="post" action="../actions/action_update_dispute_status.php" class="status-quick-form">
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="id" value="<?= $d->id ?>">
-                <select name="status" class="status-quick-select" onchange="this.form.submit()">
+                <select name="status" class="status-quick-select" data-auto-submit>
                   <option value="open"      <?= $d->status === 'open'      ? 'selected' : '' ?>>Open</option>
                   <option value="in_review" <?= $d->status === 'in_review' ? 'selected' : '' ?>>In Review</option>
                   <option value="resolved"  <?= $d->status === 'resolved'  ? 'selected' : '' ?>>Resolved</option>
                 </select>
               </form>
-              <a href="#" onclick="openDisputeModal(<?= $d->id ?>,<?= htmlspecialchars(json_encode([
-                  'author'   => $d->author_name,
-                  'category' => $DISPUTE_CATEGORIES[$d->category] ?? $d->category,
-                  'desc'     => $d->description,
-                  'status'   => $d->status,
-                  'response' => $d->admin_response ?? '',
-                  'date'     => substr($d->created_at, 0, 10),
-              ]), ENT_QUOTES) ?>);return false;">Respond</a>
+              <a href="#"
+                 data-dispute-id="<?= $d->id ?>"
+                 data-dispute="<?= htmlspecialchars(json_encode([
+                     'author'   => $d->author_name,
+                     'category' => $DISPUTE_CATEGORIES[$d->category] ?? $d->category,
+                     'desc'     => $d->description,
+                     'status'   => $d->status,
+                     'response' => $d->admin_response ?? '',
+                     'date'     => substr($d->created_at, 0, 10),
+                 ]), ENT_QUOTES) ?>">Respond</a>
             </td>
           </tr>
         <?php endforeach; ?>
@@ -109,33 +111,12 @@ $DISPUTE_CATEGORIES = [
       </div>
       <div class="dispute-modal-actions">
         <button type="submit" class="btn">Save Response</button>
-        <button type="button" class="btn btn-ghost" onclick="closeDisputeModal()">Cancel</button>
+        <button type="button" class="btn btn-ghost close-dispute-modal">Cancel</button>
       </div>
     </form>
   </div>
 </div>
 
-<script>
-function openDisputeModal(id, data) {
-    document.getElementById('modal-id').value = id;
-    document.getElementById('modal-status').value = data.status;
-    document.getElementById('modal-response').value = data.response;
-    document.getElementById('modal-meta').innerHTML =
-        '<strong>' + esc(data.author) + '</strong> &mdash; ' + esc(data.category) +
-        ' &mdash; <span class="dispute-date">' + esc(data.date) + '</span>';
-    document.getElementById('modal-desc').textContent = data.desc;
-    document.getElementById('dispute-modal').classList.add('is-open');
-}
-function closeDisputeModal() {
-    document.getElementById('dispute-modal').classList.remove('is-open');
-}
-function esc(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-document.getElementById('dispute-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeDisputeModal();
-});
-</script>
 <?php } ?>
 
 <?php function disputeAdminBadgeClass(string $status): string {

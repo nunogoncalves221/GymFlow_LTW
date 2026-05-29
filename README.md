@@ -37,13 +37,13 @@
 - [x] Manage the class catalog (create, edit, and remove classes) and assign trainers to them.
 - [x] Manage equipment in the main training area (add, update availability status, and remove items).
 - [x] Elevate a user to admin status.
-- [ ] Oversee and ensure the smooth operation of the entire system.
+- [x] Oversee and ensure the smooth operation of the entire system.
 
 **Extra:**
 - [ ] Personal Training Bookings
 - [x] Membership Plans
 - [x] Disputes and Feedback
-- [ ] Nutrition Plans
+- [x] Nutrition Plans
 
 ## Running
 

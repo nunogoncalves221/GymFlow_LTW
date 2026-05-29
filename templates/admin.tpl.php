@@ -8,6 +8,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
 ?>
 
 <?php function drawAdminNav(string $active = '') { ?>
+<a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
 <nav class="admin-nav">
   <a href="../pages/admin.php"              class="<?= $active === 'dashboard'   ? 'active' : '' ?>">Dashboard</a>
   <a href="../pages/admin_users.php"        class="<?= $active === 'users'       ? 'active' : '' ?>">Users</a>
@@ -85,7 +86,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="action" value="elevate">
                 <input type="hidden" name="id" value="<?= $user->id ?>">
-                <button type="submit" class="btn-link" onclick="return confirm('Elevate <?= h($user->name) ?> to admin?')">Elevate</button>
+                <button type="submit" class="btn-link" data-confirm="Elevate <?= h($user->name) ?> to admin?">Elevate</button>
               </form>
             <?php } ?>
             <?php if ($user->type === 'member' || $user->type === 'trainer') { ?>
@@ -93,7 +94,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="action" value="deactivate">
                 <input type="hidden" name="id" value="<?= $user->id ?>">
-                <button type="submit" class="btn-link" onclick="return confirm('Deactivate this account?')">Deactivate</button>
+                <button type="submit" class="btn-link" data-confirm="Deactivate this account?">Deactivate</button>
               </form>
             <?php } ?>
             <?php if ($user->type === 'deactivated') { ?>
@@ -101,7 +102,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="action" value="activate">
                 <input type="hidden" name="id" value="<?= $user->id ?>">
-                <button type="submit" class="btn-link" onclick="return confirm('Reactivate this account?')">Activate</button>
+                <button type="submit" class="btn-link" data-confirm="Reactivate this account?">Activate</button>
               </form>
             <?php } ?>
           </td>
@@ -194,7 +195,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
               <?= $session->csrfField() ?>
               <input type="hidden" name="action" value="delete">
               <input type="hidden" name="id" value="<?= $class->id ?>">
-              <button type="submit" class="btn-link" onclick="return confirm('Delete this class?')">Delete</button>
+              <button type="submit" class="btn-link" data-confirm="Delete this class?">Delete</button>
             </form>
           </td>
         </tr>
@@ -287,7 +288,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
               <?= $session->csrfField() ?>
               <input type="hidden" name="action" value="delete">
               <input type="hidden" name="id" value="<?= $item->id ?>">
-              <button type="submit" class="btn-link" onclick="return confirm('Delete this equipment?')">Delete</button>
+              <button type="submit" class="btn-link" data-confirm="Delete this equipment?">Delete</button>
             </form>
           </td>
         </tr>

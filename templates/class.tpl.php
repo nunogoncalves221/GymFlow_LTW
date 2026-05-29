@@ -68,7 +68,7 @@ if (!function_exists('buildCalendarRows')) {
 <a href="/pages/equipment.php" class="equip-banner">
   <div class="equip-banner-left">
     <div class="equip-banner-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="18" y2="12"/><path d="M4 8h2v8H4zM18 8h2v8h-2z"/><path d="M2 10h2v4H2zM20 10h2v4h-2z"/></svg>
+      <?php include __DIR__ . '/../docs/icons/dumbbell.svg'; ?>
     </div>
     <div class="equip-banner-text">
       <span class="equip-banner-title">Training Area</span>
@@ -93,7 +93,26 @@ if (!function_exists('buildCalendarRows')) {
     <?php endif; ?>
   </div>
   <div class="equip-banner-arrow">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <?php include __DIR__ . '/../docs/icons/arrow-right.svg'; ?>
+  </div>
+</a>
+<?php } ?>
+
+<?php function drawNutritionBanner(Session $session): void {
+    if (!$session->isLoggedIn()) return;
+    if (!in_array($session->getType(), ['member', 'trainer'])) return;
+    $label = $session->getType() === 'trainer' ? 'Nutrition Plans' : 'Nutrition';
+    $sub   = $session->getType() === 'trainer' ? 'Manage client nutrition plans' : 'View your personalised nutrition plans';
+?>
+<a href="/pages/nutrition_plans.php" class="equip-banner">
+  <div class="equip-banner-left">
+    <div class="equip-banner-icon">
+      <?php include __DIR__ . '/../docs/icons/leaf.svg'; ?>
+    </div>
+    <div class="equip-banner-text">
+      <span class="equip-banner-title"><?= h($label) ?></span>
+      <span class="equip-banner-sub"><?= h($sub) ?></span>
+    </div>
   </div>
 </a>
 <?php } ?>
@@ -103,7 +122,7 @@ if (!function_exists('buildCalendarRows')) {
 ?>
 <a href="/pages/trainers.php" class="trainers-cta-banner">
   <div class="trainers-cta-left">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <?php include __DIR__ . '/../docs/icons/user.svg'; ?>
     <div class="trainers-cta-text">
       <span class="trainers-cta-title">Our Trainers</span>
       <span class="trainers-cta-sub">Meet the experts behind every class</span>
@@ -133,7 +152,7 @@ if (!function_exists('buildCalendarRows')) {
 
   <div class="search-filters">
     <div class="filter-search-row">
-      <svg class="filter-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <?php include __DIR__ . '/../docs/icons/search.svg'; ?>
       <input type="search" id="class-search" class="filter-search-input" placeholder="Search classes, trainers…" autocomplete="off">
     </div>
     <div class="filter-inline">
@@ -156,7 +175,7 @@ if (!function_exists('buildCalendarRows')) {
 
       <div class="filter-divider"></div>
 
-      <select class="filter-select-inline" onchange="applySelectFilter('trainer', this.value)">
+      <select class="filter-select-inline" data-filter-param="trainer">
         <option value="">All trainers</option>
         <?php foreach ($trainers as $tr): ?>
           <option value="<?= h((string)$tr['id']) ?>" <?= $filter_trainer === (string)$tr['id'] ? 'selected' : '' ?>>
@@ -165,7 +184,7 @@ if (!function_exists('buildCalendarRows')) {
         <?php endforeach; ?>
       </select>
 
-      <select class="filter-select-inline" onchange="applySelectFilter('time', this.value)">
+      <select class="filter-select-inline" data-filter-param="time">
         <option value="">Any time</option>
         <option value="morning"   <?= $filter_time === 'morning'   ? 'selected' : '' ?>>Morning</option>
         <option value="afternoon" <?= $filter_time === 'afternoon' ? 'selected' : '' ?>>Afternoon</option>
@@ -316,7 +335,7 @@ if (!function_exists('buildCalendarRows')) {
 <?php } ?>
 
 <?php function drawClassDetail(FitnessClass $class, ?Trainer $trainer, array $reviews, Session $session, int $enrolled_count, bool $is_enrolled, bool $has_reviewed = false) { ?>
-  <a href="#" onclick="history.back();return false;" class="back-link"><svg ...arrow SVG... /></a>
+  <a href="#" class="back-link"><?php include __DIR__ . '/../docs/icons/arrow-left.svg'; ?></a>
   <section class="class-detail">
 
     <article class="class-info-card">
