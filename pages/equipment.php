@@ -24,12 +24,6 @@ $reservations = $is_member
     ? EquipmentReservation::getUpcomingByUser($db, $session->getId())
     : [];
 
-$filter_type = trim($_GET['type'] ?? '');
-
-$filtered = $filter_type
-    ? array_filter($equipment, fn($e) => $e->type === $filter_type)
-    : $equipment;
-
 drawHeader($session, 'GymFlow — Equipment');
-drawEquipmentPage(array_values($filtered), $types, $filter_type, $session, $is_member, $reservations);
+drawEquipmentPage($equipment, $types, $session, $is_member, $reservations);
 drawFooter();

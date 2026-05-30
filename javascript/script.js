@@ -1,4 +1,4 @@
-// ── Equipment reservation form toggle + auto-advance ──────────────────────
+// Equipment reservation form toggle and auto-advance
 document.addEventListener('DOMContentLoaded', function () {
     function closeReservePanel(targetId, btn, defaultLabel) {
         var panel = document.getElementById(targetId);
@@ -49,13 +49,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ── Equipment filter pills — replace history entry instead of pushing ────
-    document.querySelectorAll('.equip-pill').forEach(function (pill) {
-        pill.addEventListener('click', function (e) {
-            e.preventDefault();
-            window.location.replace(this.href);
+    // Equipment filter pills - client-side filtering
+    var equipPills = document.querySelectorAll('.equip-pill');
+    if (equipPills.length) {
+        var equipCards = document.querySelectorAll('#equip-grid .equip-card');
+        var equipEmpty = document.getElementById('equip-empty');
+        var equipGrid  = document.getElementById('equip-grid');
+
+        function applyEquipFilter(type) {
+            equipPills.forEach(function (p) {
+                p.classList.toggle('active', (p.dataset.filter || '') === type);
+            });
+            var visible = 0;
+            equipCards.forEach(function (card) {
+                var show = !type || card.dataset.type === type;
+                card.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            if (equipEmpty) equipEmpty.style.display = visible === 0 ? '' : 'none';
+            if (equipGrid)  equipGrid.style.display  = visible === 0 ? 'none' : '';
+            var url = new URL(window.location.href);
+            if (type) url.searchParams.set('type', type);
+            else url.searchParams.delete('type');
+            history.replaceState(null, '', url.toString());
+        }
+
+        equipPills.forEach(function (pill) {
+            pill.addEventListener('click', function (e) {
+                e.preventDefault();
+                applyEquipFilter(pill.dataset.filter || '');
+            });
         });
-    });
+
+        applyEquipFilter(new URLSearchParams(window.location.search).get('type') || '');
+    }
 
     document.addEventListener('input', function (e) {
         var input = e.target;
@@ -97,7 +124,7 @@ function closeDisputeModal() {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ── Flash message auto-dismiss ─────────────────────────────────────────
+    // Flash message auto-dismiss
     document.querySelectorAll('.flash').forEach(function (flash) {
         var timer = setTimeout(function () { dismissFlash(flash); }, 4000);
         flash.style.cursor = 'pointer';
@@ -117,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 420);
     }
 
-    // ── Back links ─────────────────────────────────────────────────────────
+    // Back links
     document.querySelectorAll('a.back-link[href="#"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
             e.preventDefault();
@@ -125,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ── Confirm dialogs (buttons and forms) ───────────────────────────────
+    // Confirm dialogs for buttons and forms
     document.querySelectorAll('button[data-confirm]').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
             if (!confirm(this.dataset.confirm)) e.preventDefault();
@@ -138,19 +165,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // ── Auto-submit selects ───────────────────────────────────────────────
+    // Auto-submit selects
     document.querySelectorAll('select[data-auto-submit]').forEach(function (sel) {
         sel.addEventListener('change', function () { this.form.submit(); });
     });
 
-    // ── Filter selects ────────────────────────────────────────────────────
+    // Filter selects
     document.querySelectorAll('select[data-filter-param]').forEach(function (sel) {
         sel.addEventListener('change', function () {
             applySelectFilter(this.dataset.filterParam, this.value);
         });
     });
 
-    // ── Report form: character counter + submit confirmation ───────────────
+    // Report form character counter and submit confirmation
     var reportTextarea = document.querySelector('.disputes-page .dispute-textarea');
     if (reportTextarea) {
         var counter = document.createElement('span');
@@ -184,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // ── Password confirmation validator ────────────────────────────────────
+    // Password confirmation validator
     var newPw     = document.getElementById('newPw');
     var confirmPw = document.getElementById('confirmPw');
 
@@ -216,12 +243,12 @@ document.addEventListener('DOMContentLoaded', function () {
         confirmPw.addEventListener('input', checkPasswords);
     }
 
-    // ── Staggered card entrance animation ─────────────────────────────────
+    // Staggered card entrance animation
     document.querySelectorAll('.class-card').forEach(function (card, i) {
         card.style.animationDelay = (i * 0.045) + 's';
     });
 
-    // ── Live search — filters class cards client-side ──────────────────────
+    // Live search - filters class cards client-side
     var searchInput  = document.getElementById('class-search');
     var resultsCount = document.getElementById('filter-results-count');
     var cards        = Array.from(document.querySelectorAll('.class-card'));
@@ -271,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Trainer dashboard calendar modal ──────────────────────────────────
+    // Trainer dashboard calendar modal
     const modal = document.getElementById('class-modal');
     if (modal) {
         document.querySelectorAll('.cal-class-card').forEach(function (card) {
@@ -314,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Profile picture preview ────────────────────────────────────────────
+    // Profile picture preview
     const editBtn  = document.getElementById('avatar-edit-btn');
     const editMenu = document.getElementById('avatar-edit-menu');
     const fileInput = document.getElementById('profile_picture');
@@ -341,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Class cards index page modal ──────────────────────────────
+    // Class cards index page modal
     var classInfoModal = document.getElementById('class-info-modal');
     if (classInfoModal) {
         document.querySelectorAll('.class-card[data-sessions]').forEach(function (card) {
@@ -377,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── View toggle (Classes / Schedule) ─────────────────────────
+    // View toggle between Classes and Schedule
     var btnViewClasses  = document.getElementById('btn-view-classes');
     var btnViewSchedule = document.getElementById('btn-view-schedule');
     var viewClassesEl   = document.getElementById('view-classes');
@@ -408,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Dispute modal ──────────────────────────────────────────────────────
+    // Dispute modal
     var disputeModal = document.getElementById('dispute-modal');
     if (disputeModal) {
         document.querySelectorAll('[data-dispute-id]').forEach(function (a) {
@@ -427,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Nutrition plans modal ──────────────────────────────────────────────
+    // Nutrition plans modal
     var planModal = document.getElementById('plan-modal');
     if (planModal) {
         document.getElementById('btn-new-plan').addEventListener('click', function () {

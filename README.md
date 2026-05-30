@@ -40,7 +40,7 @@
 - [x] Oversee and ensure the smooth operation of the entire system.
 
 **Extra:**
-- [ ] Personal Training Bookings
+- [x] Equipment Reservation
 - [x] Membership Plans
 - [x] Disputes and Feedback
 - [x] Nutrition Plans

@@ -12,7 +12,7 @@ function equipmentIcon(string $type): string {
 }
 ?>
 
-<?php function drawEquipmentPage(array $equipment, array $types, string $activeType, Session $session, bool $is_member, array $reservations): void {
+<?php function drawEquipmentPage(array $equipment, array $types, Session $session, bool $is_member, array $reservations): void {
     $today = date('Y-m-d');
 ?>
 
@@ -140,20 +140,18 @@ function equipmentIcon(string $type): string {
   <?php endif; ?>
 
   <div class="equip-filters">
-    <a href="/pages/equipment.php"
-       class="equip-pill <?= $activeType === '' ? 'active' : '' ?>">All</a>
+    <a href="/pages/equipment.php" data-filter=""
+       class="equip-pill active">All</a>
     <?php foreach ($types as $t): ?>
-      <a href="/pages/equipment.php?type=<?= urlencode($t) ?>"
-         class="equip-pill <?= $activeType === $t ? 'active' : '' ?>"><?= h($t) ?></a>
+      <a href="/pages/equipment.php?type=<?= urlencode($t) ?>" data-filter="<?= h($t) ?>"
+         class="equip-pill"><?= h($t) ?></a>
     <?php endforeach; ?>
   </div>
 
-  <?php if (empty($equipment)): ?>
-    <p class="equip-empty">No equipment found for this category.</p>
-  <?php else: ?>
-    <div class="equip-grid">
-      <?php foreach ($equipment as $item): ?>
-        <article class="equip-card <?= $item->isAvailable() ? '' : 'equip-card--unavailable' ?>">
+  <p class="equip-empty" id="equip-empty" style="display:none">No equipment found for this category.</p>
+  <div class="equip-grid" id="equip-grid">
+    <?php foreach ($equipment as $item): ?>
+      <article class="equip-card <?= $item->isAvailable() ? '' : 'equip-card--unavailable' ?>" data-type="<?= h($item->type) ?>">
           <div class="equip-card-stripe <?= $item->isAvailable() ? 'stripe--available' : 'stripe--unavailable' ?>"></div>
           <div class="equip-card-body">
             <div class="equip-card-top">
@@ -246,9 +244,8 @@ function equipmentIcon(string $type): string {
 
           </div>
         </article>
-      <?php endforeach; ?>
-    </div>
-  <?php endif; ?>
+    <?php endforeach; ?>
+  </div>
 
 </section>
 

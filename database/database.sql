@@ -2,12 +2,13 @@ PRAGMA foreign_keys = ON;
 
 -- Users
 CREATE TABLE IF NOT EXISTS users (
-    id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    name     TEXT    NOT NULL,
-    username TEXT    NOT NULL UNIQUE,
-    password TEXT    NOT NULL,
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT    NOT NULL,
+    username        TEXT    NOT NULL UNIQUE,
+    password        TEXT    NOT NULL,
     type            TEXT    NOT NULL DEFAULT 'member' CHECK(type IN ('member', 'trainer', 'admin', 'deactivated')),
-    profile_picture TEXT    NOT NULL DEFAULT '/docs/profile_pictures/default.jpg'
+    profile_picture TEXT    NOT NULL DEFAULT '/docs/profile_pictures/default.jpg',
+    plan_id         INTEGER REFERENCES membership_plans(id)
 );
 
 CREATE TABLE IF NOT EXISTS trainers (
@@ -76,9 +77,6 @@ CREATE TABLE IF NOT EXISTS membership_plan_features (
     feature TEXT    NOT NULL
 );
 
--- plan_id on users (NULL = no plan assigned)
-ALTER TABLE users ADD COLUMN plan_id INTEGER REFERENCES membership_plans(id);
-
 -- Membership change requests
 CREATE TABLE IF NOT EXISTS membership_requests (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -136,7 +134,7 @@ CREATE TABLE IF NOT EXISTS disputes (
 INSERT INTO users (id, name, username, password, type) VALUES
 (1, 'Admin',           'admin',   '$2y$10$YiGX7nmnZBTAx0oKm7Bcg.b.FjaSU0O7qZA/uvF8VCKA/FNI.uk0S', 'admin'),
 (2, 'Member',          'member',  '$2y$10$sJLmymNsI.hUjzCkeEsk/Os9H3iKqg/nuefPdKvpPVBrj/cua4gSO', 'member'),
-(3, 'trainer',         'trainer', '$2y$10$JjuyfvlJtdFbt/lHo4Wy0Oefv1X/Iz8qo81rr3CS1KEGBriVs0MuC', 'trainer'),
+(13, 'trainer',        'trainer', '$2y$10$JjuyfvlJtdFbt/lHo4Wy0Oefv1X/Iz8qo81rr3CS1KEGBriVs0MuC', 'trainer'),
 (3, 'Ana Silva',       'ana',     '$2y$10$W3tzUEUSrbm2.s4.78dKdOqw.WcyFlmOpxVUx/449Av/51.yLaGKG', 'trainer'),
 (4, 'Carlos Mota',     'carlos',  '$2y$10$v.dUaXE2XMuV/bMBGzxwPOP9Xz1RAs.5GL1LBduzX3L/7Fw3oCoje', 'trainer'),
 (5, 'Marta Lima',      'marta',   '$2y$10$9UZW2joJ0p8j6q9zWAohEODyB342yrCYxxNO9JDMFM98KpXq54/42', 'trainer'),

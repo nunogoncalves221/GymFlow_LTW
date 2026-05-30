@@ -57,7 +57,7 @@ require_once(__DIR__ . '/../database/equipment.class.php');
 <?php function drawUserList(array $users, Session $session, string $typeFilter = '') { ?>
 <section class="admin-section">
   <div class="admin-section-header">
-    <h2><?= $typeFilter ? ucfirst($typeFilter) . 's' : 'All Users' ?></h2>
+    <h2><?= $typeFilter ? ucfirst(h($typeFilter)) . 's' : 'All Users' ?></h2>
     <div class="admin-section-actions">
       <a href="?action=create_member" class="btn btn-small">+ Member</a>
       <a href="?action=create_trainer" class="btn btn-small">+ Trainer</a>

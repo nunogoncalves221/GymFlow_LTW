@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+date_default_timezone_set('Europe/Lisbon');
+
 class EquipmentReservation {
     public int $id;
     public int $user_id;
@@ -285,7 +287,7 @@ class EquipmentReservation {
              FROM equipment_reservations r
              JOIN equipment e ON e.id = r.equipment_id
              WHERE r.user_id = ? AND r.status = 'active'
-             AND (r.date > date('now') OR (r.date = date('now') AND r.end_time > time('now')))
+             AND (r.date > date('now', 'localtime') OR (r.date = date('now', 'localtime') AND r.end_time > time('now', 'localtime')))
              ORDER BY r.date, r.start_time"
         );
         $stmt->execute([$userId]);
