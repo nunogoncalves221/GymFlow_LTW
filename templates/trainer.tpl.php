@@ -7,14 +7,14 @@ declare(strict_types=1);
 
   <section class="trainer-detail">
 
-    <header class="trainer-info-card">
+    <article class="trainer-info-card">
       <span class="trainer-photo"><?= h(initials($trainer->name)) ?></span>
       <section class="trainer-info-text">
         <h1><?= h($trainer->name) ?></h1>
         <div class="trainer-specialty"><?= h($trainer->specializations) ?></div>
         <p><?= h($trainer->bio) ?></p>
       </section>
-    </header>
+    </article>
 
     <section class="trainer-classes">
       <h2>Classes</h2>

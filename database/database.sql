@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS disputes (
 INSERT INTO users (id, name, username, password, type) VALUES
 (1, 'Admin',           'admin',   '$2y$10$YiGX7nmnZBTAx0oKm7Bcg.b.FjaSU0O7qZA/uvF8VCKA/FNI.uk0S', 'admin'),
 (2, 'Member',          'member',  '$2y$10$sJLmymNsI.hUjzCkeEsk/Os9H3iKqg/nuefPdKvpPVBrj/cua4gSO', 'member'),
-(13, 'trainer',        'trainer', '$2y$10$JjuyfvlJtdFbt/lHo4Wy0Oefv1X/Iz8qo81rr3CS1KEGBriVs0MuC', 'trainer'),
+(13,'trainer',         'trainer', '$2y$10$jeuaPkJgUw2aJorKZZi1P.RPyaQT8q..OkKGMWc.ARuvfsi2OQm6q', 'trainer'),
 (3, 'Ana Silva',       'ana',     '$2y$10$W3tzUEUSrbm2.s4.78dKdOqw.WcyFlmOpxVUx/449Av/51.yLaGKG', 'trainer'),
 (4, 'Carlos Mota',     'carlos',  '$2y$10$v.dUaXE2XMuV/bMBGzxwPOP9Xz1RAs.5GL1LBduzX3L/7Fw3oCoje', 'trainer'),
 (5, 'Marta Lima',      'marta',   '$2y$10$9UZW2joJ0p8j6q9zWAohEODyB342yrCYxxNO9JDMFM98KpXq54/42', 'trainer'),
@@ -152,7 +152,8 @@ INSERT INTO trainers (id, name, bio, specializations, certifications, user_id) V
 (2, 'Carlos Mota', 'Carlos has over 8 years of experience as a personal trainer, specialising in high-intensity workouts. Certified in HIIT, Crossfit and Sports Nutrition.', 'HIIT · Crossfit · Box Fit', 'HIIT Specialist, Crossfit Level 1, Sports Nutrition Certificate', 4),
 (3, 'Marta Lima',  'Pilates instructor and physiotherapist with a focus on core strength and injury rehabilitation.', 'Pilates · Meditation', 'Pilates Method Alliance, BSc Physiotherapy', 5),
 (4, 'João Pires',  'Cycling and cardio expert. João brings high energy and technical expertise to every spinning session.', 'Spinning · Cycling', 'Spinning Instructor Certification, Level 3 Personal Trainer', 6),
-(5, 'Rita Costa',  'Functional fitness coach specialising in crossfit and outdoor training. Rita loves pushing limits safely.', 'Crossfit · Functional Fitness', 'Crossfit Level 2, NSCA-CPT', 7);
+(5, 'Rita Costa',  'Functional fitness coach specialising in crossfit and outdoor training. Rita loves pushing limits safely.', 'Crossfit · Functional Fitness', 'Crossfit Level 2, NSCA-CPT', 7),
+(6, 'trainer',     'General fitness trainer.', 'General Fitness', 'Personal Trainer Certification', 13);
 
 -- Classes
 INSERT INTO classes (id, name, type, description, duration_min, capacity, trainer_id, image, day_of_week, time) VALUES

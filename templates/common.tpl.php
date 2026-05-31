@@ -15,7 +15,7 @@ require_once(__DIR__ . '/../utils/session.php');
 </head>
 <body>
   <header class="site-header">
-    <h1><a href="/pages/index.php" class="header-logo">GymFlow</a></h1>
+    <span><a href="/pages/index.php" class="header-logo">GymFlow</a></span>
     <?php
       if ($session->isLoggedIn()) drawLogoutForm($session);
       else drawLoginForm();

@@ -63,7 +63,7 @@ img {
 }
 
 /* HEADER */
-header.site-header {
+.site-header {
     grid-area: header;
     display: flex;
     align-items: center;
@@ -87,7 +87,7 @@ main {
     margin: 0 auto;
 }
 
-footer.site-footer {
+.site-footer {
     grid-area: footer;
     display: flex;
     align-items: center;
@@ -1086,14 +1086,14 @@ a.btn-book {
 
 /* RESPONSIVE */
 @media (max-width: 640px) {
-    header.site-header {
+    .site-header {
         padding: 0 1.25rem;
     }
     main {
         padding: 1.5rem 1rem;
     }
 
-    footer.site-footer {
+    .site-footer {
         flex-direction: column;
         gap: 0.5rem;
         text-align: center;
@@ -1780,17 +1780,26 @@ a.btn-book {
 
 .admin-table td.actions {
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
-.admin-table td.actions a {
+.admin-table td.actions a,
+.admin-table td.actions button {
     color: var(--accent);
     font-size: 0.85rem;
     text-decoration: none;
-    margin-right: 0.75rem;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
 }
-.admin-table td.actions a:last-child {
-    margin-right: 0;
+.admin-table td.actions form {
+    display: contents;
 }
-.admin-table td.actions a:hover {
+.admin-table td.actions a:hover,
+.admin-table td.actions button:hover {
     text-decoration: underline;
 }
 

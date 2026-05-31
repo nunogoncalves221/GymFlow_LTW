@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Confirm dialogs for buttons and forms
-    document.querySelectorAll('button[data-confirm]').forEach(function (btn) {
+    document.querySelectorAll('button[data-confirm], a[data-confirm]').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
             if (!confirm(this.dataset.confirm)) e.preventDefault();
         });

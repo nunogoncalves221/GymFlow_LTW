@@ -82,23 +82,23 @@ require_once(__DIR__ . '/../database/equipment.class.php');
           <td class="actions">
             <a href="?action=edit&id=<?= $user->id ?>">Edit</a>
             <?php if ($user->type !== 'admin') { ?>
-              <form method="post" style="display:inline">
+              <form method="post">
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="action" value="elevate">
                 <input type="hidden" name="id" value="<?= $user->id ?>">
-                <button type="submit" class="btn-link" data-confirm="Elevate <?= h($user->name) ?> to admin?">Elevate</button>
+                <a href="#" onclick="this.closest('form').submit();return false;" data-confirm="Elevate <?= h($user->name) ?> to admin?">Elevate</a>
               </form>
             <?php } ?>
             <?php if ($user->type === 'member' || $user->type === 'trainer') { ?>
-              <form method="post" style="display:inline">
+              <form method="post">
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="action" value="deactivate">
                 <input type="hidden" name="id" value="<?= $user->id ?>">
-                <button type="submit" class="btn-link" data-confirm="Deactivate this account?">Deactivate</button>
+                <a href="#" onclick="this.closest('form').submit();return false;" data-confirm="Deactivate this account?">Deactivate</a>
               </form>
             <?php } ?>
             <?php if ($user->type === 'deactivated') { ?>
-              <form method="post" style="display:inline">
+              <form method="post">
                 <?= $session->csrfField() ?>
                 <input type="hidden" name="action" value="activate">
                 <input type="hidden" name="id" value="<?= $user->id ?>">
@@ -191,11 +191,11 @@ require_once(__DIR__ . '/../database/equipment.class.php');
           <td><?= $class->capacity ?></td>
           <td class="actions">
             <a href="?action=edit&id=<?= $class->id ?>">Edit</a>
-            <form method="post" style="display:inline">
+            <form method="post">
               <?= $session->csrfField() ?>
               <input type="hidden" name="action" value="delete">
               <input type="hidden" name="id" value="<?= $class->id ?>">
-              <button type="submit" class="btn-link" data-confirm="Delete this class?">Delete</button>
+              <a href="#" onclick="this.closest('form').submit();return false;" data-confirm="Delete this class?">Delete</a>
             </form>
           </td>
         </tr>
@@ -284,11 +284,11 @@ require_once(__DIR__ . '/../database/equipment.class.php');
           </td>
           <td class="actions">
             <a href="?action=edit&id=<?= $item->id ?>">Edit</a>
-            <form method="post" style="display:inline">
+            <form method="post">
               <?= $session->csrfField() ?>
               <input type="hidden" name="action" value="delete">
               <input type="hidden" name="id" value="<?= $item->id ?>">
-              <button type="submit" class="btn-link" data-confirm="Delete this equipment?">Delete</button>
+              <a href="#" onclick="this.closest('form').submit();return false;" data-confirm="Delete this equipment?">Delete</a>
             </form>
           </td>
         </tr>

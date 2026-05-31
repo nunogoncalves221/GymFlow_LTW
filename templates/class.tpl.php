@@ -42,14 +42,14 @@ if (!function_exists('buildCalendarRows')) {
 ?>
 
 <?php function drawHeroBanner() { ?>
-<div class="hero-banner">
-  <img class="hero-bg" src="/docs/images/banner.jpeg" alt="">
-  <div class="hero-content">
-    <p class="hero-eyebrow">Welcome to</p>
-    <h1 class="hero-title">GymFlow</h1>
-    <p class="hero-sub">Find your class. Book your spot. Show up.</p>
+  <div class="hero-banner">
+    <img class="hero-bg" src="/docs/images/banner.jpeg" alt="">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Welcome to</p>
+      <p class="hero-title">GymFlow</p>
+      <p class="hero-sub">Find your class. Book your spot. Show up.</p>
+    </div>
   </div>
-</div>
 <?php } ?>
 
 <?php function drawEquipmentBanner(array $equipment, Session $session): void {

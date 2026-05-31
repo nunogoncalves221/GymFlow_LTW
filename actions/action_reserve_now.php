@@ -47,5 +47,9 @@ $end_time   = sprintf('%02d:%02d', (int)$end_hour, (int)$end_minute);
 $result = EquipmentReservation::create($db, $session->getId(), $equipment_id, $date, $start_time, $end_time);
 [$type, $text] = explode(':', $result, 2);
 
+if ($type === 'success') {
+    $db->prepare('UPDATE equipment SET in_use = in_use + 1 WHERE id = ?')->execute([$equipment_id]);
+}
+
 $session->addMessage($type, $text);
 header('Location: /pages/equipment.php');
